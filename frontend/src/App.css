@@ -1,0 +1,78 @@
+/* App.css */
+
+/* Auth Layout Styles */
+/*
+   This layout is now designed to be a flexible container that fills the screen,
+   allowing its child (LoginPageUI) to define its own specific size and background.
+*/
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Match the overall background color of your LoginPageUI's outer container */
+  background-color:rgb(255, 255, 255); /* Light grey, as per LoginPageUI's pageContainer */
+  width: 100vw; /* Ensure it takes the full viewport width */
+  box-sizing: border-box; /* Include padding in element's total width and height */
+  /* Remove any padding here if LoginPageUI is handling its own outer padding */
+}
+
+/*
+   The .auth-container is now a pass-through.
+   It no longer restricts width or applies its own background/shadow.
+   LoginPageUI's internal styles will now define the card's appearance.
+*/
+.auth-container {
+  width: 100%; /* Allow child to dictate width */
+  height: 100%; /* Allow child to dictate height */
+  display: flex; /* Important for centering and flexible children */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  /* Removed: max-width, padding, background, border-radius, box-shadow */
+}
+
+/* If you use .auth-content, ensure it's also flexible */
+.auth-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Main Layout Styles (Kept as is, as they were not the cause of the issue) */
+.main-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.header {
+  background: #fff;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+
+.sidebar {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-right: 1px solid #eee;
+}
+
+.content-area {
+  padding: 2rem;
+}
+
+.footer {
+  background: #fff;
+  padding: 1rem 2rem;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+
