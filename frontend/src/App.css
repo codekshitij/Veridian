@@ -1,78 +1,91 @@
-/* App.css */
+/* Completely Dark App.css - No White Backgrounds */
 
-/* Auth Layout Styles */
-/*
-   This layout is now designed to be a flexible container that fills the screen,
-   allowing its child (LoginPageUI) to define its own specific size and background.
-*/
+/* Force dark theme on ALL elements */
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #0F0F23 !important;
+  color: #F8FAFC !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif !important;
+  min-height: 100vh;
+}
+
+/* Auth Layout Styles - Completely Dark */
 .auth-layout {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Match the overall background color of your LoginPageUI's outer container */
-  background-color:rgb(255, 255, 255); /* Light grey, as per LoginPageUI's pageContainer */
-  width: 100vw; /* Ensure it takes the full viewport width */
-  box-sizing: border-box; /* Include padding in element's total width and height */
-  /* Remove any padding here if LoginPageUI is handling its own outer padding */
+  background-color: #0F0F23 !important;
+  width: 100vw;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif !important;
 }
 
-/*
-   The .auth-container is now a pass-through.
-   It no longer restricts width or applies its own background/shadow.
-   LoginPageUI's internal styles will now define the card's appearance.
-*/
 .auth-container {
-  width: 100%; /* Allow child to dictate width */
-  height: 100%; /* Allow child to dictate height */
-  display: flex; /* Important for centering and flexible children */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  /* Removed: max-width, padding, background, border-radius, box-shadow */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent !important;
 }
 
-/* If you use .auth-content, ensure it's also flexible */
 .auth-content {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: transparent !important;
 }
 
-
-/* Main Layout Styles (Kept as is, as they were not the cause of the issue) */
+/* Main Layout Styles - Dark Theme */
 .main-layout {
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto;
+  background-color: #0F0F23 !important;
+  font-family: 'Inter', sans-serif !important;
 }
 
 .header {
-  background: #fff;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
+  background: #16213E !important;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #334155;
+  color: #F8FAFC !important;
 }
 
 .main-content {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 280px 1fr;
+  background-color: #0F0F23 !important;
 }
 
 .sidebar {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-right: 1px solid #eee;
+  background: #0F0F23 !important;
+  padding: 0;
+  border-right: 1px solid #334155;
 }
 
 .content-area {
   padding: 2rem;
+  background-color: #16213E !important;
+  color: #F8FAFC !important;
 }
 
 .footer {
-  background: #fff;
+  background: #16213E !important;
   padding: 1rem 2rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #334155;
   text-align: center;
+  color: #CBD5E1 !important;
 }
 
+/* Ensure no component can override the dark theme */
+div, section, main, header, footer, nav, aside, article {
+  background-color: transparent !import
