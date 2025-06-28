@@ -227,7 +227,7 @@ function Sidebar({ isMobileOpen, isCollapsed, onToggle }) {
   const navLinks = [
     { path: '/dashboard', name: 'Dashboard', icon: 'dashboard' },
     { path: '/calendar', name: 'Calendar', icon: 'calendar_month' },
-    { path: '/okrs', name: 'OKRs', icon: 'ads_click' },
+    { path: '/workspace', name: 'Workspace', icon: 'work' },
     { path: '/idea-canvas', name: 'Idea Canvas', icon: 'lightbulb' },
   ];
 

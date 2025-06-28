@@ -90,7 +90,7 @@ body {
 }
 
 /* Force all containers to be dark with proper text */
-div, section, main, header, footer, nav, aside {
+section, main, header, footer, nav, aside {
   color: var(--color-text-primary) !important;
 }
 
