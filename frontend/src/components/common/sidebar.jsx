@@ -7,8 +7,8 @@ const styles = {
     fontFamily: 'var(--font-family)',
     position: 'relative',
     width: '280px',
-    backgroundColor: '#111827', // Darker background for better contrast
-    borderRight: '2px solid #1E293B', // Darker border
+    backgroundColor: '#0F172A',
+    borderRight: '2px solid #334155',
     color: '#FFFFFF',
     display: 'flex',
     flexDirection: 'column',
@@ -106,29 +106,31 @@ const styles = {
     alignItems: 'center',
     padding: '1rem 1.25rem',
     textDecoration: 'none',
-    color: '#FFFFFF',
+    color: '#F1F5F9',
     fontSize: '1rem',
     fontWeight: '600',
     borderRadius: '12px',
     transition: 'all 0.3s ease',
     position: 'relative',
     border: '2px solid transparent',
-    backgroundColor: '#1E293B', // Darker background for nav links
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
   },
+  
   navLinkActive: {
-    backgroundColor: '#2563EB', // More vibrant blue
+    backgroundColor: '#3B82F6',
     color: '#FFFFFF',
     fontWeight: '700',
-    boxShadow: '0 6px 20px rgba(37, 99, 235, 0.4)',
-    border: '2px solid #3B82F6',
+    boxShadow: '0 6px 20px rgba(59, 130, 246, 0.4)',
+    border: '2px solid #60A5FA',
     transform: 'translateX(6px)',
   },
+  
   navLinkHover: {
-    backgroundColor: '#2563EB', // Match active for hover
+    backgroundColor: '#1E293B',
     color: '#FFFFFF',
     transform: 'translateX(4px)',
-    border: '2px solid #3B82F6',
-    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
+    border: '2px solid #475569',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
   },
   
   navIcon: {
@@ -153,7 +155,7 @@ const styles = {
     padding: '1rem 1.25rem',
     backgroundColor: '#1E293B',
     color: '#FFFFFF',
-    border: '2px solid #3B82F6', // More contrast
+    border: '2px solid #475569',
     borderRadius: '12px',
     marginBottom: '0.75rem',
     cursor: 'pointer',
@@ -165,18 +167,20 @@ const styles = {
     fontWeight: '700',
     transition: 'all 0.3s ease',
   },
+  
   accountButtonHover: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#334155',
     borderColor: '#3B82F6',
     transform: 'translateY(-2px)',
-    boxShadow: '0 6px 20px rgba(37, 99, 235, 0.2)',
-    color: '#FFFFFF',
+    boxShadow: '0 6px 20px rgba(59, 130, 246, 0.2)',
+    color: '#60A5FA',
   },
+  
   logoutButton: {
     width: '100%',
     padding: '1rem 1.25rem',
-    backgroundColor: '#7F1D1D', // Dark red for better contrast
-    color: '#FFFFFF',
+    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+    color: '#FCA5A5',
     border: '2px solid #EF4444',
     borderRadius: '12px',
     cursor: 'pointer',
@@ -188,6 +192,7 @@ const styles = {
     fontWeight: '700',
     transition: 'all 0.3s ease',
   },
+  
   logoutButtonHover: {
     backgroundColor: '#EF4444',
     color: '#FFFFFF',
