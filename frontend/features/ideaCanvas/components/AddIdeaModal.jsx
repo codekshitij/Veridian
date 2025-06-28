@@ -1,106 +1,9 @@
 // src/components/AddIdeaModal.jsx
 import React, { useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
-import 'easymde/dist/easymde.min.css'; // Don't forget the CSS for the editor!
+import 'simplemde/dist/simplemde.min.css'; // Import SimpleMDE CSS
+import './AddIdeaModal.css'; // Import our custom styles
 import ideasService from '../service/ideasService'; // Adjust path
-
-// Styles for the Modal
-const modalStyles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Darker overlay
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  content: {
-    backgroundColor: 'var(--color-white-primary)', // Creamy white background
-    padding: '30px',
-    borderRadius: '10px',
-    boxShadow: '0 5px 20px rgba(0, 0, 0, 0.3)',
-    width: '90%',
-    maxWidth: '700px', // Slightly wider for Markdown editor
-    position: 'relative',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    color: 'var(--color-gray-text-on-light)',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '20px',
-    paddingBottom: '10px',
-    borderBottom: '1px solid rgba(0,0,0,0.05)',
-  },
-  h3: {
-    fontSize: '1.8em',
-    fontWeight: '600',
-    margin: 0,
-    color: 'var(--color-blue-ink)',
-  },
-  closeBtn: {
-    background: 'none',
-    border: 'none',
-    fontSize: '1.8em',
-    cursor: 'pointer',
-    color: 'var(--color-gray-text-on-light)',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '8px',
-    fontWeight: '500',
-    color: 'var(--color-gray-text-on-light)',
-  },
-  input: {
-    width: 'calc(100% - 20px)',
-    padding: '10px',
-    marginBottom: '15px',
-    border: '1px solid rgba(0,0,0,0.1)',
-    borderRadius: '5px',
-    fontSize: '1em',
-    color: 'var(--color-gray-text-on-light)',
-    backgroundColor: 'var(--color-white-primary)',
-  },
-  simpleMdeContainer: { // Specific styling for SimpleMDE
-    marginBottom: '15px',
-  },
-  footer: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '10px',
-    marginTop: '20px',
-    paddingTop: '15px',
-    borderTop: '1px solid rgba(0,0,0,0.05)',
-  },
-  button: {
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontSize: '1em',
-    fontWeight: '600',
-    border: 'none',
-    transition: 'background-color 0.2s ease',
-  },
-  primaryButton: {
-    backgroundColor: 'var(--color-green-primary)',
-    color: 'var(--color-white)',
-  },
-  secondaryButton: {
-    backgroundColor: 'var(--color-blue-ink)', // Blue ink for secondary
-    color: 'var(--color-white)',
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: '10px',
-    fontSize: '0.9em',
-  },
-};
 
 function AddIdeaModal({ onClose, onIdeaAdded, userId }) {
   const [title, setTitle] = useState('');
@@ -135,48 +38,76 @@ function AddIdeaModal({ onClose, onIdeaAdded, userId }) {
     }
   };
 
+  const simpleMdeOptions = {
+    spellChecker: false,
+    placeholder: "Write your idea details here using Markdown...",
+    toolbar: [
+      "bold", "italic", "heading", "|",
+      "quote", "unordered-list", "ordered-list", "|",
+      "link", "image", "|",
+      "preview", "side-by-side", "fullscreen", "|",
+      "guide"
+    ],
+    autofocus: false,
+    autosave: {
+      enabled: false,
+    },
+    status: ["lines", "words", "cursor"],
+    hideIcons: [],
+    showIcons: ["bold", "italic", "heading", "quote", "unordered-list", "ordered-list", "link", "image"],
+    renderingConfig: {
+      singleLineBreaks: false,
+      codeSyntaxHighlighting: true,
+    },
+    insertTexts: {
+      horizontalRule: ["", "\n\n-----\n\n"],
+      image: ["![](http://", ")"],
+      link: ["[", "](http://)"],
+      table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
+    },
+  };
+
   return (
-    <div style={modalStyles.overlay}>
-      <div style={modalStyles.content}>
-        <div style={modalStyles.header}>
-          <h3 style={modalStyles.h3}>Add New Idea</h3>
-          <button style={modalStyles.closeBtn} onClick={onClose}>&times;</button>
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h3 className="modal-title">Add New Idea</h3>
+          <button className="modal-close-btn" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body">
-          {formError && <p style={modalStyles.errorText}>{formError}</p>}
-          <label htmlFor="ideaTitle" style={modalStyles.label}>Idea Title</label>
+          {formError && <div className="modal-error-text">{formError}</div>}
+          <label htmlFor="ideaTitle" className="modal-label">Idea Title</label>
           <input
             type="text"
             id="ideaTitle"
-            style={modalStyles.input}
+            className="modal-input"
             placeholder="e.g., Launch new marketing campaign"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={isSaving}
           />
 
-          <label htmlFor="ideaDescription" style={modalStyles.label}>Description (Markdown)</label>
-          <div style={modalStyles.simpleMdeContainer}>
+          <label htmlFor="ideaDescription" className="modal-label">Description (Markdown)</label>
+          <div className="simple-mde-container">
             <SimpleMDE
+              id="ideaDescription"
               value={description}
               onChange={setDescription}
-              options={{
-                  spellChecker: false,
-                  placeholder: "Write your idea details here using Markdown...",
-              }}
+              options={simpleMdeOptions}
+              className="custom-simplemde"
             />
           </div>
         </div>
-        <div style={modalStyles.footer}>
+        <div className="modal-footer">
           <button
-            style={{ ...modalStyles.button, ...modalStyles.secondaryButton }}
+            className="modal-button modal-button-secondary"
             onClick={onClose}
             disabled={isSaving}
           >
             Cancel
           </button>
           <button
-            style={{ ...modalStyles.button, ...modalStyles.primaryButton }}
+            className="modal-button modal-button-primary"
             onClick={handleSaveIdea}
             disabled={isSaving}
           >
