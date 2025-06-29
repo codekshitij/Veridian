@@ -497,8 +497,7 @@ function LoginPageUI({
           <div style={styles.leftSectionOverlay}></div>
           
           <div style={styles.brandSection}>
-            <div style={styles.brandName}>Veridian</div>
-            <div style={styles.brandTagline}>Your productivity companion</div>
+            <div style={styles.brandName}>CRUX</div>
           </div>
           
           <div style={styles.mainMessageGroup}>

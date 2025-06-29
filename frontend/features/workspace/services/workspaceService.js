@@ -1,61 +1,91 @@
 // features/workspace/services/workspaceService.js
 import { Auth } from "aws-amplify";
 
-// Use your existing API Gateway base URL or create a new endpoint for workspace
 const API_GATEWAY_BASE_URL =
-  "https://tumlsjr0ec.execute-api.us-east-2.amazonaws.com/dev";
+  "https://jrx99mn1fb.execute-api.us-east-2.amazonaws.com/Dev";
+
+
+const getAuthHeaders = async () => {
+  try {
+    const session = await Auth.currentSession();
+    const idToken = session.getIdToken().getJwtToken();
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    };
+  } catch (error) {
+    console.error("No valid session found:", error);
+    throw new Error("User is not authenticated");
+  }
+};
+
+// Helper function to handle Lambda proxy response format
+const handleLambdaResponse = async (response, operation) => {
+  console.log(`DEBUG (${operation}): Response status:`, response.status);
+
+  if (!response.ok) {
+    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+  }
+
+  const responseData = await response.json();
+  console.log(`DEBUG (${operation}): Raw response:`, responseData);
+
+  // Check if this is a Lambda proxy response with statusCode
+  if (responseData.statusCode !== undefined) {
+    if (responseData.statusCode >= 400) {
+      let errorMessage = `${operation} failed`;
+      try {
+        const errorBody = JSON.parse(responseData.body);
+        errorMessage = errorBody.message || errorBody.error || errorMessage;
+      } catch  {
+        errorMessage = responseData.body || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+
+    // For successful Lambda proxy responses, parse the body
+    if (responseData.body) {
+      try {
+        const actualData = JSON.parse(responseData.body);
+        console.log(
+          `DEBUG (${operation}): Parsed successful response:`,
+          actualData
+        );
+        return actualData;
+      } catch (parseError) {
+        console.error(`Error parsing successful response body:`, parseError);
+        return responseData.body;
+      }
+    }
+
+    // If no body, return the response as-is (for DELETE operations)
+    return responseData;
+  }
+
+  // Direct response (not Lambda proxy format)
+  console.log(`DEBUG (${operation}): Direct response:`, responseData);
+  return responseData;
+};
 
 const workspaceService = {
   /**
    * Get all goals for a user within a date range
    */
-  getGoals: async (userId, dateRange = null) => {
+  getGoals: async (dateRange = null) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
-      let url = `${API_GATEWAY_BASE_URL}/workspace/goals?userId=${userId}`;
-
+      let url = `${API_GATEWAY_BASE_URL}/workspace/goals`;
       if (dateRange) {
-        url += `&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
+        url += `?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
       }
-
-      console.log(
-        "DEBUG (workspaceService.getGoals): Fetching goals from:",
-        url
-      );
 
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
+        headers: headers,
       });
 
-      console.log(
-        "DEBUG (workspaceService.getGoals): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to fetch goals: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const goals = await response.json();
-      console.log(
-        "DEBUG (workspaceService.getGoals): Goals fetched successfully:",
-        goals
-      );
+      const goals = await handleLambdaResponse(response, "getGoals");
       return goals;
     } catch (error) {
       console.error("WorkspaceService: Error fetching goals:", error);
@@ -68,46 +98,17 @@ const workspaceService = {
    */
   createGoal: async (goalData) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
-      console.log(
-        "DEBUG (workspaceService.createGoal): Creating goal:",
-        goalData
-      );
+      console.log("DEBUG (createGoal): Creating goal:", goalData);
 
       const response = await fetch(`${API_GATEWAY_BASE_URL}/workspace/goals`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
+        headers: headers,
         body: JSON.stringify(goalData),
       });
 
-      console.log(
-        "DEBUG (workspaceService.createGoal): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to create goal: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const createdGoal = await response.json();
-      console.log(
-        "DEBUG (workspaceService.createGoal): Goal created successfully:",
-        createdGoal
-      );
+      const createdGoal = await handleLambdaResponse(response, "createGoal");
       return createdGoal;
     } catch (error) {
       console.error("WorkspaceService: Error creating goal:", error);
@@ -120,50 +121,20 @@ const workspaceService = {
    */
   updateGoal: async (goalId, updates) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
-      console.log(
-        "DEBUG (workspaceService.updateGoal): Updating goal:",
-        goalId,
-        updates
-      );
+      console.log("DEBUG (updateGoal): Updating goal:", goalId, updates);
 
       const response = await fetch(
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
           body: JSON.stringify(updates),
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.updateGoal): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to update goal: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const updatedGoal = await response.json();
-      console.log(
-        "DEBUG (workspaceService.updateGoal): Goal updated successfully:",
-        updatedGoal
-      );
+      const updatedGoal = await handleLambdaResponse(response, "updateGoal");
       return updatedGoal;
     } catch (error) {
       console.error("WorkspaceService: Error updating goal:", error);
@@ -176,46 +147,20 @@ const workspaceService = {
    */
   deleteGoal: async (goalId) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
-      console.log(
-        "DEBUG (workspaceService.deleteGoal): Deleting goal:",
-        goalId
-      );
+      console.log("DEBUG (deleteGoal): Deleting goal:", goalId);
 
       const response = await fetch(
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}`,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.deleteGoal): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to delete goal: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      console.log(
-        "DEBUG (workspaceService.deleteGoal): Goal deleted successfully"
-      );
+      await handleLambdaResponse(response, "deleteGoal");
+      console.log("DEBUG (deleteGoal): Goal deleted successfully");
       return true;
     } catch (error) {
       console.error("WorkspaceService: Error deleting goal:", error);
@@ -228,11 +173,10 @@ const workspaceService = {
    */
   updateTask: async (goalId, taskId, taskUpdates) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
       console.log(
-        "DEBUG (workspaceService.updateTask): Updating task:",
+        "DEBUG (updateTask): Updating task:",
         goalId,
         taskId,
         taskUpdates
@@ -242,36 +186,12 @@ const workspaceService = {
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}/tasks/${taskId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
           body: JSON.stringify(taskUpdates),
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.updateTask): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to update task: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const updatedGoal = await response.json();
-      console.log(
-        "DEBUG (workspaceService.updateTask): Task updated successfully"
-      );
+      const updatedGoal = await handleLambdaResponse(response, "updateTask");
       return updatedGoal;
     } catch (error) {
       console.error("WorkspaceService: Error updating task:", error);
@@ -284,47 +204,20 @@ const workspaceService = {
    */
   addTask: async (goalId, taskData) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
-      console.log(
-        "DEBUG (workspaceService.addTask): Adding task:",
-        goalId,
-        taskData
-      );
+      console.log("DEBUG (addTask): Adding task:", goalId, taskData);
 
       const response = await fetch(
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}/tasks`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
           body: JSON.stringify(taskData),
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.addTask): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to add task: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const updatedGoal = await response.json();
-      console.log("DEBUG (workspaceService.addTask): Task added successfully");
+      const updatedGoal = await handleLambdaResponse(response, "addTask");
       return updatedGoal;
     } catch (error) {
       console.error("WorkspaceService: Error adding task:", error);
@@ -337,48 +230,19 @@ const workspaceService = {
    */
   deleteTask: async (goalId, taskId) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
-      console.log(
-        "DEBUG (workspaceService.deleteTask): Deleting task:",
-        goalId,
-        taskId
-      );
+      console.log("DEBUG (deleteTask): Deleting task:", goalId, taskId);
 
       const response = await fetch(
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}/tasks/${taskId}`,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.deleteTask): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to delete task: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const updatedGoal = await response.json();
-      console.log(
-        "DEBUG (workspaceService.deleteTask): Task deleted successfully"
-      );
+      const updatedGoal = await handleLambdaResponse(response, "deleteTask");
       return updatedGoal;
     } catch (error) {
       console.error("WorkspaceService: Error deleting task:", error);
@@ -394,11 +258,10 @@ const workspaceService = {
     completionDate = new Date().toISOString().split("T")[0]
   ) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
       console.log(
-        "DEBUG (workspaceService.recordHabitCompletion): Recording completion:",
+        "DEBUG (recordHabitCompletion): Recording completion:",
         goalId,
         completionDate
       );
@@ -407,35 +270,14 @@ const workspaceService = {
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}/habits/complete`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
           body: JSON.stringify({ completionDate }),
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.recordHabitCompletion): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to record habit completion: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const updatedGoal = await response.json();
-      console.log(
-        "DEBUG (workspaceService.recordHabitCompletion): Habit completion recorded successfully"
+      const updatedGoal = await handleLambdaResponse(
+        response,
+        "recordHabitCompletion"
       );
       return updatedGoal;
     } catch (error) {
@@ -452,11 +294,10 @@ const workspaceService = {
    */
   updateSkillModule: async (goalId, moduleId, moduleUpdates) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
       console.log(
-        "DEBUG (workspaceService.updateSkillModule): Updating module:",
+        "DEBUG (updateSkillModule): Updating module:",
         goalId,
         moduleId,
         moduleUpdates
@@ -466,35 +307,14 @@ const workspaceService = {
         `${API_GATEWAY_BASE_URL}/workspace/goals/${goalId}/modules/${moduleId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
+          headers: headers,
           body: JSON.stringify(moduleUpdates),
         }
       );
 
-      console.log(
-        "DEBUG (workspaceService.updateSkillModule): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to update skill module: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const updatedGoal = await response.json();
-      console.log(
-        "DEBUG (workspaceService.updateSkillModule): Skill module updated successfully"
+      const updatedGoal = await handleLambdaResponse(
+        response,
+        "updateSkillModule"
       );
       return updatedGoal;
     } catch (error) {
@@ -508,49 +328,23 @@ const workspaceService = {
    */
   getGoalAnalytics: async (userId, goalId = null) => {
     try {
-      const session = await Auth.currentSession();
-      const idToken = session.getIdToken().getJwtToken();
+      const headers = await getAuthHeaders();
 
       let url = `${API_GATEWAY_BASE_URL}/workspace/analytics?userId=${userId}`;
       if (goalId) {
         url += `&goalId=${goalId}`;
       }
 
-      console.log(
-        "DEBUG (workspaceService.getGoalAnalytics): Fetching analytics from:",
-        url
-      );
+      console.log("DEBUG (getGoalAnalytics): Fetching analytics from:", url);
 
       const response = await fetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
+        headers: headers,
       });
 
-      console.log(
-        "DEBUG (workspaceService.getGoalAnalytics): Response status:",
-        response.status
-      );
-
-      if (!response.ok) {
-        let errorMessage = `Failed to fetch analytics: ${response.statusText}`;
-        try {
-          const errorData = await response.json();
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.error("Error parsing API error response:", parseError);
-        }
-        throw new Error(errorMessage);
-      }
-
-      const analytics = await response.json();
-      console.log(
-        "DEBUG (workspaceService.getGoalAnalytics): Analytics fetched successfully:",
-        analytics
+      const analytics = await handleLambdaResponse(
+        response,
+        "getGoalAnalytics"
       );
       return analytics;
     } catch (error) {

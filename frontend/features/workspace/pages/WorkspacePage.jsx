@@ -150,13 +150,30 @@ function WorkspacePage() {
       setIsLoading(false);
       return;
     }
-
+  
     setIsLoading(true);
     setError(null);
     
     try {
-      const fetchedGoals = await workspaceService.getGoals(user.attributes.sub, dateRange);
-      setGoals(fetchedGoals || []);
+      const response = await workspaceService.getGoals(user.attributes.sub, dateRange);
+      
+      // Debug: Check what we're actually getting
+      console.log('API Response:', response, 'Type:', typeof response, 'Is array:', Array.isArray(response));
+      
+      // Handle different response formats
+      let goalsArray;
+      if (Array.isArray(response)) {
+        goalsArray = response;
+      } else if (response && Array.isArray(response.data)) {
+        goalsArray = response.data;
+      } else if (response && Array.isArray(response.goals)) {
+        goalsArray = response.goals;
+      } else {
+        console.warn('Unexpected response format:', response);
+        goalsArray = [];
+      }
+      
+      setGoals(goalsArray);
     } catch (err) {
       console.error('Error fetching goals:', err);
       setError('Failed to load goals. Please try refreshing.');
@@ -188,6 +205,7 @@ function WorkspacePage() {
   };
 
   const handleGoalUpdated = (updatedGoal) => {
+    console.log('Updating goal:', updatedGoal); // Add this debug line
     setGoals(prev => 
       prev.map(goal => 
         goal.goalId === updatedGoal.goalId ? updatedGoal : goal
@@ -195,8 +213,13 @@ function WorkspacePage() {
     );
     setSelectedGoal(null);
   };
-
+  
   const handleGoalDeleted = (goalId) => {
+    console.log('Deleting goal ID:', goalId); // Add this debug line
+    if (!goalId) {
+      console.error('Cannot delete goal: goalId is undefined');
+      return;
+    }
     setGoals(prev => prev.filter(goal => goal.goalId !== goalId));
     setSelectedGoal(null);
   };
