@@ -35,19 +35,19 @@ const styles = {
   // Toggle button that appears when sidebar is collapsed
   toggleButton: {
     position: 'fixed',
-    top: '20px',
+    top: '23px',
     left: '20px',
-    width: '48px',
-    height: '48px',
+    width: '38px', // smaller width
+    height: '38px', // smaller height
     backgroundColor: '#1E293B',
     border: '2px solid #475569',
-    borderRadius: '12px',
+    borderRadius: '8px', // smaller radius
     color: '#FFFFFF',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '1.3rem',
+    fontSize: '1rem', // smaller icon
     fontWeight: '700',
     transition: 'all 0.3s ease',
     zIndex: 1001,
@@ -67,8 +67,8 @@ const styles = {
     position: 'absolute',
     top: '20px',
     right: '20px',
-    width: '40px',
-    height: '40px',
+    width: '38px',
+    height: '38px',
     backgroundColor: 'transparent',
     border: '2px solid #475569',
     borderRadius: '10px',
@@ -263,7 +263,7 @@ function Sidebar({ isMobileOpen, isCollapsed, onToggle }) {
             onMouseLeave={(e) => Object.assign(e.target.style, styles.closeButton)}
             aria-label="Close sidebar"
           >
-            <span className="material-icons">close</span>
+            <span className="material-icons">arrow_back</span>
           </button>
         )}
 

@@ -21,52 +21,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '2rem',
-  },
-  
-  sidebarToggle: {
-    backgroundColor: 'transparent',
-    border: '2px solid #4B5563',
-    borderRadius: '12px',
-    fontSize: '1.3rem',
-    color: '#FFFFFF',
-    cursor: 'pointer',
-    padding: '0.75rem',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '48px',
-    height: '48px',
-  },
-  
-  sidebarToggleHover: {
-    backgroundColor: '#2A2A2A',
-    borderColor: '#60A5FA',
-    color: '#60A5FA',
-    transform: 'scale(1.05)',
-  },
-  
-  mobileToggle: {
-    display: 'none',
-    backgroundColor: 'transparent',
-    border: '2px solid #4B5563',
-    borderRadius: '8px',
-    fontSize: '1.5rem',
-    color: '#FFFFFF',
-    cursor: 'pointer',
-    padding: '0.75rem',
-    transition: 'all 0.3s ease',
-    '@media (max-width: 768px)': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  },
-  
-  mobileToggleHover: {
-    backgroundColor: '#2A2A2A',
-    borderColor: '#60A5FA',
-    color: '#60A5FA',
+    flex: 1, // Take up all available space
   },
   
   brandName: {
@@ -83,6 +38,7 @@ const styles = {
     position: 'relative',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
+    marginLeft: '14px',
   },
   
   brandNameHover: {
@@ -95,6 +51,7 @@ const styles = {
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
+    marginLeft: '32px', // More margin to ensure no overlap
   },
   
   brandGlow: {
@@ -119,6 +76,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '1.5rem',
+    zIndex: 1,
   },
   
   iconButton: {
@@ -127,15 +85,15 @@ const styles = {
     borderRadius: '12px',
     color: '#E5E7EB',
     cursor: 'pointer',
-    fontSize: '1.3rem',
+    fontSize: '1rem',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '0.75rem',
+    padding: '0.7rem',
     transition: 'all 0.3s ease',
     position: 'relative',
-    width: '48px',
-    height: '48px',
+    width: '40px',
+    height: '40px',
   },
   
   iconButtonHover: {
@@ -217,12 +175,12 @@ const styles = {
   
   dropdownIcon: {
     color: '#9CA3AF',
-    fontSize: '1.2rem',
+    fontSize: '1rem',
     transition: 'color 0.3s ease',
   },
 };
 
-function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
+function Header() {
   const [brandHovered, setBrandHovered] = React.useState(false);
   const [notifHovered, setNotifHovered] = React.useState(false);
   const [userHovered, setUserHovered] = React.useState(false);
@@ -230,30 +188,6 @@ function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
   return (
     <header style={styles.headerContainer}>
       <div style={styles.headerLeft}>
-        {/* Desktop Sidebar Toggle */}
-        <button
-          style={styles.sidebarToggle}
-          onClick={toggleSidebar}
-          aria-label={isSidebarCollapsed ? "Open sidebar" : "Close sidebar"}
-          onMouseEnter={e => Object.assign(e.target.style, styles.sidebarToggleHover)}
-          onMouseLeave={e => Object.assign(e.target.style, styles.sidebarToggle)}
-        >
-          <span className="material-icons">
-            {isSidebarCollapsed ? 'menu_open' : 'menu'}
-          </span>
-        </button>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          style={styles.mobileToggle}
-          onClick={toggleMobileSidebar}
-          aria-label="Toggle mobile sidebar"
-          onMouseEnter={e => Object.assign(e.target.style, styles.mobileToggleHover)}
-          onMouseLeave={e => Object.assign(e.target.style, styles.mobileToggle)}
-        >
-          <span className="material-icons">menu</span>
-        </button>
-
         {/* Veridian Brand Name */}
         <div style={styles.brandContainer}>
           <div 
