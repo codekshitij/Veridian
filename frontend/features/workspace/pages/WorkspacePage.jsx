@@ -48,7 +48,7 @@ const workspaceStyles = {
     flexWrap: 'wrap',
   },
   addButton: {
-    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    background: 'linear-gradient(135deg,rgb(73, 237, 36) 0%,rgb(26, 165, 8) 100%)',
     border: 'none',
     color: 'white',
     padding: '10px 20px',
