@@ -81,13 +81,13 @@ const MainLayout = () => {
       {/* Main Content */}
       <main style={{
         gridArea: 'content',
-        padding: 'var(--spacing-xl)',
+        padding: '0rem',
         backgroundColor: 'var(--color-surface)',
         boxSizing: 'border-box',
         overflowY: 'auto',
         border: '1px solid var(--color-border)',
-        borderRadius: isSidebarCollapsed ? 'var(--radius-lg)' : 'var(--radius-lg) 0 0 0',
-        margin: isSidebarCollapsed ? 'var(--spacing-md)' : '0 0 0 -1px',
+        borderRadius: isSidebarCollapsed ? 'var(--radius-lg)': '0',
+        margin: isSidebarCollapsed ? 'var(--spacing-md)' : '0 0 0 0px',
         transition: 'all 0.3s ease',
       }}>
         <Outlet />
