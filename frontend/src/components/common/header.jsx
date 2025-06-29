@@ -2,10 +2,10 @@ import React from 'react';
 
 const styles = {
   headerContainer: {
-    fontFamily: 'var(--font-family)',
+    fontFamily: 'var(--font-family), sans-serif',
     backgroundColor: '#1A1A1A',
     color: '#FFFFFF',
-    padding: '0.8rem 2rem',
+    padding: '0.3rem 2rem',
     borderBottom: '2px solid #4B5563',
     display: 'flex',
     justifyContent: 'space-between',
@@ -25,7 +25,7 @@ const styles = {
   },
   
   brandName: {
-    fontFamily: 'var(--font-family)',
+    fontFamily: 'Bebas Neue, sans-serif',
     fontSize: '2.5rem',
     fontWeight: '900',
     letterSpacing: '-0.03em',
@@ -204,7 +204,8 @@ function Header() {
             onMouseEnter={() => setBrandHovered(true)}
             onMouseLeave={() => setBrandHovered(false)}
           >
-            Veridian
+            <span style={{ fontSize: '5rem', fontWeight: 600, letterSpacing: '-0.01em', verticalAlign: 'middle' }}>C</span>
+            <span style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.03em', verticalAlign: 'middle' }}>rux</span>
           </h1>
         </div>
       </div>
