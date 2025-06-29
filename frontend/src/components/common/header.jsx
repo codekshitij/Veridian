@@ -5,7 +5,7 @@ const styles = {
     fontFamily: 'var(--font-family)',
     backgroundColor: '#1A1A1A',
     color: '#FFFFFF',
-    padding: '1.5rem 2rem',
+    padding: '0.8rem 2rem',
     borderBottom: '2px solid #4B5563',
     display: 'flex',
     justifyContent: 'space-between',
@@ -162,7 +162,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '1rem',
-    padding: '0.75rem 1rem',
+    padding: '0.5rem 0.8rem',
     borderRadius: '12px',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
@@ -178,8 +178,8 @@ const styles = {
   },
   
   userAvatar: {
-    width: '40px',
-    height: '40px',
+    width: '30px',
+    height: '30px',
     borderRadius: '50%',
     backgroundColor: '#60A5FA',
     display: 'flex',
@@ -224,6 +224,8 @@ const styles = {
 
 function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
   const [brandHovered, setBrandHovered] = React.useState(false);
+  const [notifHovered, setNotifHovered] = React.useState(false);
+  const [userHovered, setUserHovered] = React.useState(false);
 
   return (
     <header style={styles.headerContainer}>
@@ -233,8 +235,8 @@ function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
           style={styles.sidebarToggle}
           onClick={toggleSidebar}
           aria-label={isSidebarCollapsed ? "Open sidebar" : "Close sidebar"}
-          onMouseEnter={(e) => Object.assign(e.target.style, styles.sidebarToggleHover)}
-          onMouseLeave={(e) => Object.assign(e.target.style, styles.sidebarToggle)}
+          onMouseEnter={e => Object.assign(e.target.style, styles.sidebarToggleHover)}
+          onMouseLeave={e => Object.assign(e.target.style, styles.sidebarToggle)}
         >
           <span className="material-icons">
             {isSidebarCollapsed ? 'menu_open' : 'menu'}
@@ -246,8 +248,8 @@ function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
           style={styles.mobileToggle}
           onClick={toggleMobileSidebar}
           aria-label="Toggle mobile sidebar"
-          onMouseEnter={(e) => Object.assign(e.target.style, styles.mobileToggleHover)}
-          onMouseLeave={(e) => Object.assign(e.target.style, styles.mobileToggle)}
+          onMouseEnter={e => Object.assign(e.target.style, styles.mobileToggleHover)}
+          onMouseLeave={e => Object.assign(e.target.style, styles.mobileToggle)}
         >
           <span className="material-icons">menu</span>
         </button>
@@ -276,10 +278,13 @@ function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
       <div style={styles.headerRight}>
         {/* Notification Button */}
         <button
-          style={styles.iconButton}
+          style={{
+            ...styles.iconButton,
+            ...(notifHovered ? styles.iconButtonHover : {})
+          }}
           aria-label="Notifications"
-          onMouseEnter={(e) => Object.assign(e.target.style, styles.iconButtonHover)}
-          onMouseLeave={(e) => Object.assign(e.target.style, styles.iconButton)}
+          onMouseEnter={() => setNotifHovered(true)}
+          onMouseLeave={() => setNotifHovered(false)}
         >
           <span className="material-icons">notifications</span>
           <div style={styles.notificationBadge}></div>
@@ -287,9 +292,12 @@ function Header({ toggleMobileSidebar, toggleSidebar, isSidebarCollapsed }) {
 
         {/* User Profile Section */}
         <div
-          style={styles.userSection}
-          onMouseEnter={(e) => Object.assign(e.target.style, styles.userSectionHover)}
-          onMouseLeave={(e) => Object.assign(e.target.style, styles.userSection)}
+          style={{
+            ...styles.userSection,
+            ...(userHovered ? styles.userSectionHover : {})
+          }}
+          onMouseEnter={() => setUserHovered(true)}
+          onMouseLeave={() => setUserHovered(false)}
         >
           <div style={styles.userAvatar}>
             JD
