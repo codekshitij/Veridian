@@ -8,12 +8,13 @@ import LoginPage from '../features/auth/pages/LoginPage' // Your existing LoginP
 import IdeaCanvasPage from '../features/ideaCanvas/components/IdeaCanvasPage' // Renamed to RealIdeaCanvasPage to avoid conflict with placeholder
 import DashboardPage from '../features/dashboard/pages/DashboardPage' // Your existing DashboardPage
 import WorkspacePage from '../features/workspace/pages/WorkspacePage'
+import CalendarPage from '../features/calendar/pages/CalendarPage' // Your existing CalendarPage
 
 import './App.css' // Your existing CSS import
 
 // Placeholder components (keep these as placeholders until you implement them)
 const SignupPage = () => <div>Signup Page</div>
-const CalendarPage = () => <div>Calendar</div>
+
 
 
 function App() {
@@ -31,7 +32,6 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/workspace" element={<WorkspacePage />} />
-          {/* IMPORTANT: Use the imported RealIdeaCanvasPage here */}
           <Route path="/idea-canvas" element={<IdeaCanvasPage />} />
         </Route>
 

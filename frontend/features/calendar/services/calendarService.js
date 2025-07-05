@@ -6,7 +6,7 @@ import { Auth } from "aws-amplify";
 // IMPORTANT: REPLACE THIS WITH YOUR API GATEWAY INVOKE URL
 // Following the same pattern as your ideas service
 const API_GATEWAY_BASE_URL =
-  "https://tumlsjr0ec.execute-api.us-east-2.amazonaws.com/dev";
+  "https://1qh2o8e1v5.execute-api.us-east-2.amazonaws.com/dev";
 
 const calendarService = {
   /**

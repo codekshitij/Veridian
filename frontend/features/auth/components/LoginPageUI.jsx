@@ -1,4 +1,5 @@
 import React from 'react';
+import DecryptedText from '../../animation/DecryptedText';
 
 // --- Rebuilt Styles from Scratch ---
 
@@ -43,7 +44,7 @@ const styles = {
   
   brandName: {
     fontWeight: '900',
-    fontSize: '2rem',
+    fontSize: '4rem',
   },
 
   welcomeMessage: {
@@ -151,8 +152,26 @@ function LoginPageUI({
         {/* Left Section (Branding) */}
         <div style={styles.leftSection}>
           <div style={styles.brandName}>CRUX</div>
-          <h1 style={styles.welcomeMessage}>Welcome Back.</h1>
-          <p>Continue your journey.</p>
+          <h1 style={{ ...styles.welcomeMessage, marginBottom: '-13rem' }}>
+            <DecryptedText
+              text="WELCOME BACK."
+              speed={40}
+              maxIterations={18}
+              animateOn="view"
+              revealDirection="center"
+              className="decrypted-heading"
+            />
+          </h1>
+          <p style={{ fontSize: '1.25rem', marginTop: 0, color: '#FFF', fontWeight: 500, textShadow: '0 0 0 transparent' }}>
+            <DecryptedText
+              text="Sign in to access your personalized dashboard and get back to achieving your goals."
+              speed={18}
+              maxIterations={12}
+              animateOn="view"
+              revealDirection="start"
+              className="decrypted-para"
+            />
+          </p>
         </div>
 
         {/* Right Section (Form) - THIS PART SCROLLS INTERNALLY */}

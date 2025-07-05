@@ -1,8 +1,10 @@
 // features/workspace/components/GoalCard.jsx
-import React, { useState } from 'react';
+import React from 'react';
+import TiltedCard from './TiltedCard';
 import ProgressBar from './ProgressBar';
 import { formatRelativeDate } from '../utils/dateUtils';
 import { calculateProgress } from '../utils/progressUtils';
+import './TiltedCard.css';
 
 const cardStyles = {
   card: {
@@ -171,8 +173,6 @@ const goalTypeStyles = {
 };
 
 function GoalCard({ goal, onClick }) {
-  const [isHovered, setIsHovered] = useState(false);
-
   const progress = calculateProgress(goal);
   const statusStyles = {
     active: cardStyles.statusActive,
@@ -188,67 +188,84 @@ function GoalCard({ goal, onClick }) {
   };
 
   return (
-    <div
-      style={{
-        ...cardStyles.card,
-        ...goalTypeStyles[goal.type],
-        ...(isHovered ? cardStyles.cardHover : {}),
-      }}
-      onClick={() => onClick(goal)}
-      onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      role="button"
-      tabIndex={0}
-      aria-label={`Open ${goal.title} goal details`}
+    <TiltedCard
+      containerHeight="300px"
+      containerWidth="100%"
+      imageHeight="300px"
+      imageWidth="100%"
+      scaleOnHover={1.05}
+      rotateAmplitude={10}
+      showMobileWarning={false}
+      showTooltip={true}
     >
-      <div 
+      <div
         style={{
-          ...cardStyles.statusIndicator,
-          ...statusStyles[goal.status],
+          ...cardStyles.card,
+          ...goalTypeStyles[goal.type],
+          boxShadow: 'none',
+          background: 'rgba(30, 41, 59, 0.8)',
+          position: 'relative',
+          minHeight: '200px',
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 2,
         }}
-        aria-label={`Status: ${goal.status}`}
-      />
-
-      <div style={cardStyles.header}>
+        onClick={() => onClick(goal)}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+        aria-label={`Open ${goal.title} goal details`}
+      >
         <div 
           style={{
-            ...cardStyles.icon,
-            ...goalTypeStyles[goal.type],
+            ...cardStyles.statusIndicator,
+            ...statusStyles[goal.status],
           }}
-        >
-          {goalTypeIcons[goal.type] || '🎯'}
+          aria-label={`Status: ${goal.status}`}
+        />
+
+        <div style={cardStyles.header}>
+          <div 
+            style={{
+              ...cardStyles.icon,
+              ...goalTypeStyles[goal.type],
+            }}
+          >
+            {goalTypeIcons[goal.type] || '🎯'}
+          </div>
+          <div style={cardStyles.titleSection}>
+            <div style={cardStyles.title}>{goal.title}</div>
+            <div style={cardStyles.type}>{goal.type}</div>
+          </div>
         </div>
-        <div style={cardStyles.titleSection}>
-          <div style={cardStyles.title}>{goal.title}</div>
-          <div style={cardStyles.type}>{goal.type}</div>
+
+        {goal.description && (
+          <div style={cardStyles.description}>
+            {goal.description}
+          </div>
+        )}
+
+        <div style={cardStyles.progressSection}>
+          <div style={cardStyles.progressHeader}>
+            <span style={cardStyles.progressLabel}>Progress</span>
+            <span style={cardStyles.progressPercent}>{Math.round(progress)}%</span>
+          </div>
+          <ProgressBar progress={progress} />
+        </div>
+
+        <div style={cardStyles.footer}>
+          <div style={cardStyles.timeline}>
+            <span>📅</span>
+            <span>{formatRelativeDate(goal.startDate)}</span>
+          </div>
+          <div style={cardStyles.itemsCount}>
+            {goal.tasks?.length || 0} tasks
+          </div>
         </div>
       </div>
-
-      {goal.description && (
-        <div style={cardStyles.description}>
-          {goal.description}
-        </div>
-      )}
-
-      <div style={cardStyles.progressSection}>
-        <div style={cardStyles.progressHeader}>
-          <span style={cardStyles.progressLabel}>Progress</span>
-          <span style={cardStyles.progressPercent}>{Math.round(progress)}%</span>
-        </div>
-        <ProgressBar progress={progress} />
-      </div>
-
-      <div style={cardStyles.footer}>
-        <div style={cardStyles.timeline}>
-          <span>📅</span>
-          <span>{formatRelativeDate(goal.startDate)}</span>
-        </div>
-        <div style={cardStyles.itemsCount}>
-          {goal.tasks?.length || 0} tasks
-        </div>
-      </div>
-    </div>
+    </TiltedCard>
   );
 }
 

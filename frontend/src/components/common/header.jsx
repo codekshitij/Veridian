@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const styles = {
   headerContainer: {
@@ -181,72 +181,80 @@ const styles = {
 };
 
 function Header() {
-  const [brandHovered, setBrandHovered] = React.useState(false);
-  const [notifHovered, setNotifHovered] = React.useState(false);
-  const [userHovered, setUserHovered] = React.useState(false);
+  const [brandHovered, setBrandHovered] = useState(false);
+  const [notifHovered, setNotifHovered] = useState(false);
+  const [userHovered, setUserHovered] = useState(false);
 
   return (
-    <header style={styles.headerContainer}>
-      <div style={styles.headerLeft}>
-        {/* Veridian Brand Name */}
-        <div style={styles.brandContainer}>
-          <div 
+    <>
+      <header style={styles.headerContainer}>
+        <div style={styles.headerLeft}>
+          {/* Veridian Brand Name */}
+          <div style={styles.brandContainer}>
+            <div 
+              style={{
+                ...styles.brandGlow,
+                ...(brandHovered ? styles.brandGlowActive : {})
+              }}
+            ></div>
+            <h1 
+              style={{
+                ...styles.brandName,
+                ...(brandHovered ? styles.brandNameHover : {})
+              }}
+              onMouseEnter={() => setBrandHovered(true)}
+              onMouseLeave={() => setBrandHovered(false)}
+            >
+              <span style={{ fontSize: '2.8rem', fontWeight: 600, letterSpacing: '-0.01em', verticalAlign: 'middle' }}>C</span>
+              <span style={{ fontSize: '2.8rem', fontWeight: 700, letterSpacing: '-0.03em', verticalAlign: 'middle' }}>rux</span>
+            </h1>
+          </div>
+        </div>
+
+        <div style={styles.headerRight}>
+          {/* Notification Button */}
+          <button
             style={{
-              ...styles.brandGlow,
-              ...(brandHovered ? styles.brandGlowActive : {})
+              ...styles.iconButton,
+              ...(notifHovered ? styles.iconButtonHover : {})
             }}
-          ></div>
-          <h1 
-            style={{
-              ...styles.brandName,
-              ...(brandHovered ? styles.brandNameHover : {})
-            }}
-            onMouseEnter={() => setBrandHovered(true)}
-            onMouseLeave={() => setBrandHovered(false)}
+            aria-label="Notifications"
+            onMouseEnter={() => setNotifHovered(true)}
+            onMouseLeave={() => setNotifHovered(false)}
           >
-            <span style={{ fontSize: '5rem', fontWeight: 600, letterSpacing: '-0.01em', verticalAlign: 'middle' }}>C</span>
-            <span style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.03em', verticalAlign: 'middle' }}>rux</span>
-          </h1>
-        </div>
-      </div>
+            <span className="material-icons">notifications</span>
+            <div style={styles.notificationBadge}></div>
+          </button>
 
-      <div style={styles.headerRight}>
-        {/* Notification Button */}
-        <button
-          style={{
-            ...styles.iconButton,
-            ...(notifHovered ? styles.iconButtonHover : {})
-          }}
-          aria-label="Notifications"
-          onMouseEnter={() => setNotifHovered(true)}
-          onMouseLeave={() => setNotifHovered(false)}
-        >
-          <span className="material-icons">notifications</span>
-          <div style={styles.notificationBadge}></div>
-        </button>
-
-        {/* User Profile Section */}
-        <div
-          style={{
-            ...styles.userSection,
-            ...(userHovered ? styles.userSectionHover : {})
-          }}
-          onMouseEnter={() => setUserHovered(true)}
-          onMouseLeave={() => setUserHovered(false)}
-        >
-          <div style={styles.userAvatar}>
-            JD
+          {/* User Profile Section */}
+          <div
+            style={{
+              ...styles.userSection,
+              ...(userHovered ? styles.userSectionHover : {})
+            }}
+            onMouseEnter={() => setUserHovered(true)}
+            onMouseLeave={() => setUserHovered(false)}
+            // onClick={() => setLanyardOpen(true)}
+          >
+            <div style={styles.userAvatar}>
+              JD
+            </div>
+            <div style={styles.userInfo}>
+              <span style={styles.userName}>John Doe</span>
+              <span style={styles.userStatus}>● Online</span>
+            </div>
+            <span className="material-icons" style={styles.dropdownIcon}>
+              keyboard_arrow_down
+            </span>
           </div>
-          <div style={styles.userInfo}>
-            <span style={styles.userName}>John Doe</span>
-            <span style={styles.userStatus}>● Online</span>
-          </div>
-          <span className="material-icons" style={styles.dropdownIcon}>
-            keyboard_arrow_down
-          </span>
         </div>
-      </div>
-    </header>
+      </header>
+      {/* <UserLanyardPopup
+        open={lanyardOpen}
+        onClose={() => setLanyardOpen(false)}
+        user={{ name: 'John Doe', status: 'Online' }}
+      /> */}
+    </>
   );
 }
 

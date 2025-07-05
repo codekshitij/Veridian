@@ -117,11 +117,11 @@ const styles = {
   },
   
   navLinkActive: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E293B', // dark blue
     color: '#FFFFFF',
     fontWeight: '700',
-    boxShadow: '0 6px 20px rgba(59, 130, 246, 0.4)',
-    border: '2px solid #60A5FA',
+    boxShadow: '0 6px 20px rgba(30, 41, 59, 0.4)', // match dark blue
+    border: '2px solid #334155',
     transform: 'translateX(6px)',
   },
   

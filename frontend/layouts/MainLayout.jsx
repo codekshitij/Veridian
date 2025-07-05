@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../src/components/common/sidebar';
-import Header from '../src/components/common/Header';
+import Header from '../src/components/common/header';
 import Footer from '../src/components/common/Footer';
 
 const MainLayout = () => {
