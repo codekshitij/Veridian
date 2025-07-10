@@ -8,7 +8,8 @@ export default function CalendarTaskList({
   isLoadingTasks,
   isToday,
   selectedDate,
-  toggleTaskCompletion
+  toggleTaskCompletion,
+  onTaskClick
 }) {
   return (
     <div style={{
@@ -42,6 +43,7 @@ export default function CalendarTaskList({
                 styles={styles}
                 task={task}
                 toggleTaskCompletion={toggleTaskCompletion}
+                onTaskClick={onTaskClick}
               />
             ))}
         </div>

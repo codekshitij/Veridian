@@ -1,7 +1,7 @@
 import React from 'react';
 import { TASK_CATEGORIES, COMPLEXITY_LEVELS } from '../constants/categories';
 
-export default function CalendarTaskItem({ styles, task, toggleTaskCompletion }) {
+export default function CalendarTaskItem({ styles, task, toggleTaskCompletion, onTaskClick }) {
   return (
     <div
       key={task.taskId}
@@ -10,6 +10,7 @@ export default function CalendarTaskItem({ styles, task, toggleTaskCompletion })
         borderLeft: `4px solid ${TASK_CATEGORIES[task.category]?.color || '#008080'}`,
         ...(task.completed ? styles.taskCompleted : {})
       }}
+      onClick={() => onTaskClick && onTaskClick(task)}
     >
       <div style={styles.taskIcon}>
         {TASK_CATEGORIES[task.category]?.icon || '📝'}

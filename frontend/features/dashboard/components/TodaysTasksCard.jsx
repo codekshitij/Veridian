@@ -68,7 +68,7 @@ const TodaysTasksCard = () => {
         const todayISO = formatDateToISO(new Date());
         const fetched = await calendarService.getTasks(user?.attributes?.sub, todayISO);
         setTasks(fetched || []);
-      } catch (err) {
+      } catch (error) {
         setError('Failed to load today\'s tasks.');
       } finally {
         setLoading(false);

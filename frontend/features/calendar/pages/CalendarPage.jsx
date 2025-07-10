@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../src/contexts/authContext';
 import calendarService from '../services/calendarService';
 import { TASK_CATEGORIES, COMPLEXITY_LEVELS } from '../constants/categories';
@@ -7,6 +7,8 @@ import { formatDate, formatDateToISO, isToday } from '../utils/dateUtils';
 import CalendarHeader from '../components/CalendarHeader';
 import CalendarTaskList from '../components/CalendarTaskList';
 import SpotlightCard from '../components/SpotlightCard';
+import AddDeveloperTaskModal from '../components/modals/AddDeveloperTaskModal';
+import TaskDetailModal from '../components/tasks/TaskDetailModal';
 
 function CalendarPage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
@@ -18,15 +20,11 @@ function CalendarPage() {
   const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const [error, setError] = useState(null);
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [showTaskDetailModal, setShowTaskDetailModal] = useState(false);
 
   // Fetch tasks when component mounts or date changes
-  useEffect(() => {
-    if (isAuthenticated && user?.attributes?.sub) {
-      fetchTasks();
-    }
-  }, [isAuthenticated, user, selectedDate]);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setIsLoadingTasks(true);
     setError(null);
     
@@ -40,24 +38,61 @@ function CalendarPage() {
     } finally {
       setIsLoadingTasks(false);
     }
-  };
+  }, [selectedDate, user?.attributes?.sub]);
+
+  useEffect(() => {
+    if (isAuthenticated && user?.attributes?.sub) {
+      fetchTasks();
+    }
+  }, [isAuthenticated, user, selectedDate, fetchTasks]);
 
   // Task management functions
-  const handleTaskCreated = (newTask) => {
-    setTasks(prevTasks => [...prevTasks, newTask]);
-    setShowAddTaskModal(false);
+  const handleTaskCreated = async (newTaskData) => {
+    try {
+      const createdTask = await calendarService.createTask({
+        ...newTaskData,
+        userId: user.attributes.sub
+      });
+      setTasks(prevTasks => [...prevTasks, createdTask]);
+      setShowAddTaskModal(false);
+    } catch (error) {
+      console.error('Error creating task:', error);
+      throw error; // Re-throw so the modal can handle it
+    }
   };
 
-  const handleTaskUpdated = (updatedTask) => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.taskId === updatedTask.taskId ? updatedTask : task
-      )
-    );
+  const handleTaskUpdated = async (updatedTaskData) => {
+    try {
+      const updatedTask = await calendarService.updateTask(updatedTaskData.taskId || updatedTaskData.id, updatedTaskData);
+      setTasks(prevTasks => 
+        prevTasks.map(task => 
+          task.taskId === updatedTask.taskId ? updatedTask : task
+        )
+      );
+    } catch (error) {
+      console.error('Error updating task:', error);
+      throw error; // Re-throw so the modal can handle it
+    }
   };
 
-  const handleTaskDeleted = (taskId) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.taskId !== taskId));
+  const handleTaskDeleted = async (taskId) => {
+    try {
+      await calendarService.deleteTask(taskId);
+      setTasks(prevTasks => prevTasks.filter(task => task.taskId !== taskId));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error; // Re-throw so the modal can handle it
+    }
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setShowTaskDetailModal(true);
+  };
+
+  const handleCloseTaskDetailModal = () => {
+    setShowTaskDetailModal(false);
+    setSelectedTask(null);
   };
 
   const toggleTaskCompletion = async (taskId) => {
@@ -405,6 +440,7 @@ function CalendarPage() {
             isToday={isToday}
             selectedDate={selectedDate}
             toggleTaskCompletion={toggleTaskCompletion}
+            onTaskClick={handleTaskClick}
           />
         </SpotlightCard>
 
@@ -428,9 +464,23 @@ function CalendarPage() {
         </div>
       </div>
 
-      {/* Add Task Modal - We'll create this component next */}
+      {/* Add Task Modal */}
       {showAddTaskModal && (
-        <div>Task Creation Modal Placeholder</div>
+        <AddDeveloperTaskModal
+          onClose={() => setShowAddTaskModal(false)}
+          onTaskAdded={handleTaskCreated}
+          userId={user?.attributes?.sub}
+        />
+      )}
+
+      {/* Task Detail Modal */}
+      {showTaskDetailModal && selectedTask && (
+        <TaskDetailModal
+          task={selectedTask}
+          onClose={handleCloseTaskDetailModal}
+          onTaskUpdated={handleTaskUpdated}
+          onTaskDeleted={handleTaskDeleted}
+        />
       )}
     </div>
   );
