@@ -3,43 +3,36 @@ import { useAuth } from '../../../src/contexts/authContext'; // Adjust path base
 
 // Define colors, potentially reusing from a central theme file if you had one
 const dashboardHeaderColors = {
-  background: '#FFFFFF', // White background
-  textPrimary: '#333333', // Dark text
-  textAccent: '#008080', // Primary teal for accents
-  divider: '#EEEEEE',
-  shadow: 'rgba(0, 0, 0, 0.05)', // Light shadow
+  background: '#1A1A1A', // Dark background to match theme
+  textPrimary: '#F8FAFC', // Light text to match theme
+  textAccent: '#60A5FA', // Accent blue from theme
+  divider: '#232B3E',
+  shadow: 'rgba(0, 0, 0, 0.18)',
 };
 
 // Styles for the DashboardHeader
 const styles = {
   headerContainer: {
-    width: 'calc(100% + 60px)',
-    backgroundColor: dashboardHeaderColors.background,
-    padding: '0px 20px',
-    borderRadius: '8px 8px 0 0',
+    width: '100%',
+    backgroundColor: '#0F172A',
+    border: '2px solid #334155',
+    color: '#FFFFFF',
+    borderRadius: '14px',
+    padding: '24px 32px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    // Responsive adjustments - NOTE: These will NOT work as inline styles.
-    // For media queries to apply, you'd need CSS Modules, Styled Components, etc.
-    '@media (max-width: 768px)': {
-      padding: '15px 20px',
-      marginBottom: '20px',
-    },
+    marginBottom: '2rem',
+    boxSizing: 'border-box',
   },
   greetingText: {
     fontSize: '2.3em',
-    fontWeight: '600',
+    fontWeight: '700',
     color: dashboardHeaderColors.textPrimary,
-    marginBottom: '5px',
-    // Responsive font size - NOTE: These will NOT work as inline styles.
-    '@media (max-width: 768px)': {
-      fontSize: '1.5em',
-    },
-    '@media (max-width: 480px)': {
-      fontSize: '1.3em',
-    },
+    marginBottom: '0',
+    letterSpacing: '0.5px',
+    textShadow: '0 2px 8px #0ea5e944',
   },
   welcomeMessage: {
     fontSize: '1.2em',
