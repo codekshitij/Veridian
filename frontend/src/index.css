@@ -1,84 +1,391 @@
-/* Global Reset and Base Styles (index.css) */
+/* Import statements must come first */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Tailwind CSS v3 directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* High Contrast Dark Theme - Maximum Visibility */
+
 :root {
-  font-family: 'Poppins', sans-serif !important;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87); /* Default text color for root */
-  background-color: #242424; /* Default background for root (this will be overridden by body) */
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* Typography */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  
+  /* High Contrast Dark Theme Colors */
+  --color-background: #0F172A;
+  --color-surface: #1A1A1A;
+  --color-surface-elevated: #2A2A2A;
+  --color-surface-hover: #3A3A3A;
+  
+  /* Bright Primary Colors */
+  --color-primary: #60A5FA;
+  --color-primary-hover: #3B82F6;
+  --color-primary-light: #93C5FD;
+  
+  /* Secondary Colors */
+  --color-secondary: #A78BFA;
+  --color-secondary-hover: #8B5CF6;
+  --color-accent: #34D399;
+  --color-accent-hover: #10B981;
+  
+  /* Status Colors */
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-error: #F87171;
+  --color-info: #60A5FA;
+  
+  /* High Contrast Text Colors */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #E5E7EB;
+  --color-text-tertiary: #D1D5DB;
+  --color-text-muted: #9CA3AF;
+  
+  /* Border & Divider Colors */
+  --color-border: #4B5563;
+  --color-border-light: #6B7280;
+  --color-divider: #374151;
+  
+  /* Legacy color support */
+  --color-white: #FFFFFF;
+  --color-white-primary: var(--color-surface-elevated);
+  --color-gray-text-on-light: var(--color-text-secondary);
+  --color-blue-ink: var(--color-primary);
+  --color-green-primary: var(--color-accent);
+  --color-subtle-shadow: rgba(0, 0, 0, 0.8);
+  
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.8);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.8), 0 2px 4px -2px rgb(0 0 0 / 0.8);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.8), 0 4px 6px -4px rgb(0 0 0 / 0.8);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.8), 0 8px 10px -6px rgb(0 0 0 / 0.8);
 }
 
-/* Basic Reset for all elements */
+/* Force high contrast on everything */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  display: block;
-  min-width: 320px;
-  min-height: 100vh;
-  font-family: 'Poppins', sans-serif;
+/* Allow Tailwind classes to work by being more specific */
+.tailwind-test,
+.tailwind-test * {
+  all: unset !important;
+}
+
+/* Make custom styles more specific to avoid overriding Tailwind */
+body:not(.tailwind-test) {
+  background-color: var(--color-background) !important;
+  color: var(--color-text-primary) !important;
+}
+
+
+html {
+  font-family: var(--font-family) !important;
   line-height: 1.6;
-  color: #333;
-  background-color: #FFFFFF; /* CHANGED: Set to white for the very outer background */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-family) !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 #root {
-  width: 100%;
   min-height: 100vh;
 }
 
+/* Only apply dark theme when no Tailwind classes are present */
+body:not([class*="bg-"]):not([class*="text-"]) {
+  background-color: var(--color-background) !important;
+  color: var(--color-text-primary) !important;
+}
+
+#root:not([class*="bg-"]):not([class*="text-"]) {
+  background-color: var(--color-background) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Temporarily disable container overrides to test Tailwind */
+/* section:not([class*="text-"]), 
+main:not([class*="text-"]), 
+header:not([class*="text-"]), 
+footer:not([class*="text-"]), 
+nav:not([class*="text-"]), 
+aside:not([class*="text-"]) {
+  color: var(--color-text-primary) !important;
+} */
+
+/* Typography with maximum contrast */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family) !important;
+  font-weight: 800 !important;
+  line-height: 1.2;
+  color: #FFFFFF !important;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+h1 { 
+  font-size: 3.5rem; 
+  font-weight: 900 !important; 
+  color: #FFFFFF !important;
+}
+
+h2 { 
+  font-size: 2.5rem; 
+  font-weight: 800 !important; 
+  color: #FFFFFF !important;
+}
+
+h3 { 
+  font-size: 2rem; 
+  font-weight: 700 !important; 
+  color: #FFFFFF !important;
+}
+
+h4 { 
+  font-size: 1.5rem; 
+  font-weight: 700 !important; 
+  color: #FFFFFF !important;
+}
+
+h5 { 
+  font-size: 1.25rem; 
+  font-weight: 600 !important; 
+  color: #FFFFFF !important;
+}
+
+h6 { 
+  font-size: 1rem; 
+  font-weight: 600 !important; 
+  color: #FFFFFF !important;
+}
+
+p {
+  color: var(--color-text-primary) !important;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 500 !important;
+}
+
+/* High contrast links */
 a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  color: var(--color-primary) !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 600 !important;
 }
+
 a:hover {
-  color: #535bf2;
+  color: var(--color-primary-light) !important;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
+/* High contrast buttons - but not for Tailwind test */
+button:not(.tailwind-test button) {
+  font-family: var(--font-family) !important;
+  font-weight: 700 !important;
+  border: none;
   border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--color-surface-elevated);
+  color: #FFFFFF !important;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* High contrast form elements */
+input, textarea, select {
+  font-family: var(--font-family) !important;
+  background-color: var(--color-surface) !important;
+  border: 2px solid var(--color-border) !important;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #FFFFFF !important;
+  transition: all 0.2s ease;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-muted) !important;
+  font-weight: 500 !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3) !important;
+  background-color: var(--color-surface-elevated) !important;
+}
+
+/* Material Icons with proper contrast */
+.material-icons {
+  color: inherit !important;
+  font-weight: normal !important;
+}
+
+/* High contrast scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-light);
+}
+
+/* High contrast selection */
+::selection {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 2px;
+}
+
+/* Temporarily disable layout overrides to test Tailwind */
+/* .auth-layout:not([class*="bg-"]),
+.auth-container:not([class*="bg-"]),
+.auth-content:not([class*="bg-"]),
+.main-layout:not([class*="bg-"]),
+.header:not([class*="bg-"]),
+.main-content:not([class*="bg-"]),
+.sidebar:not([class*="bg-"]),
+.content-area:not([class*="bg-"]),
+.footer:not([class*="bg-"]) {
+  background-color: var(--color-background) !important;
+  color: #FFFFFF !important;
+} */
+
+/* Utility Classes with Maximum Contrast */
+.text-primary { 
+  color: #FFFFFF !important; 
+  font-weight: 700 !important;
+}
+
+.text-secondary { 
+  color: var(--color-text-secondary) !important; 
+  font-weight: 600 !important;
+}
+
+.text-muted { 
+  color: var(--color-text-muted) !important; 
+  font-weight: 500 !important;
+}
+
+.text-white { 
+  color: #FFFFFF !important; 
+  font-weight: 600 !important;
+}
+
+.bg-surface { 
+  background-color: var(--color-surface) !important; 
+}
+
+.bg-elevated { 
+  background-color: var(--color-surface-elevated) !important; 
+}
+
+.bg-primary { 
+  background-color: var(--color-primary) !important; 
+}
+
+.border { 
+  border: 2px solid var(--color-border) !important; 
+}
+
+.border-light { 
+  border: 2px solid var(--color-border-light) !important; 
+}
+
+.rounded { 
+  border-radius: 8px; 
+}
+
+.rounded-lg { 
+  border-radius: 12px; 
+}
+
+.shadow { 
+  box-shadow: var(--shadow-md); 
+}
+
+.shadow-lg { 
+  box-shadow: var(--shadow-lg); 
+}
+
+/* Button Variants with Maximum Contrast */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  border: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface-elevated) !important;
+  color: #FFFFFF !important;
+  border: 2px solid var(--color-border) !important;
+  font-weight: 700 !important;
+}
+
+.btn-outline {
+  background-color: transparent !important;
+  color: var(--color-primary) !important;
+  border: 2px solid var(--color-primary) !important;
+  font-weight: 700 !important;
+}
+
+/* High Contrast Card Components */
+.card {
+  background-color: var(--color-surface) !important;
+  border: 2px solid var(--color-border) !important;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+  color: #FFFFFF !important;
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* High Contrast Modal */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  background-color: var(--color-surface-elevated) !important;
+  border: 2px solid var(--color-border) !important;
+  color: #FFFFFF !important;
 }

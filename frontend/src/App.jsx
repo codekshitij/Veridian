@@ -5,15 +5,15 @@ import MainLayout from '../layouts/MainLayout' // Your existing MainLayout
 import LoginPage from '../features/auth/pages/LoginPage' // Your existing LoginPage
 
 // Import the actual IdeaCanvasPage component
-import IdeaCanvasPage from '../features/ideaCanvas/components/IdeaCanvasPage' // Renamed to RealIdeaCanvasPage to avoid conflict with placeholder
+import IdeaCanvasPage from '../features/ideaCanvas/pages/IdeaCanvasPage' // Renamed to RealIdeaCanvasPage to avoid conflict with placeholder
 import DashboardPage from '../features/dashboard/pages/DashboardPage' // Your existing DashboardPage
+import WorkspacePage from '../features/workspace/pages/WorkspacePage'
+import CalendarPage from '../features/calendar/pages/CalendarPage' // Your existing CalendarPage
 
 import './App.css' // Your existing CSS import
 
 // Placeholder components (keep these as placeholders until you implement them)
 const SignupPage = () => <div>Signup Page</div>
-const CalendarPage = () => <div>Calendar</div>
-const OKRPage = () => <div>OKRs</div>
 
 function App() {
   return (
@@ -29,8 +29,7 @@ function App() {
         <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/okrs" element={<OKRPage />} />
-          {/* IMPORTANT: Use the imported RealIdeaCanvasPage here */}
+          <Route path="/workspace" element={<WorkspacePage />} />
           <Route path="/idea-canvas" element={<IdeaCanvasPage />} />
         </Route>
 

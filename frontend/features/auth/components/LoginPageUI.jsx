@@ -1,332 +1,220 @@
 import React from 'react';
-// If you're using icon libraries, you'd import them here, e.g.:
-// import { Mail, Lock, Eye, EyeOff, Google } from 'lucide-react';
+import DecryptedText from '../../animation/DecryptedText';
 
-// --- Define Color Variables FIRST ---
-const tealPrimary = '#008080';
-const tealLight = '#4DE1E1';
-const tealDark = '#005757';
-const offWhite = '#F8F8F8';
+// --- Rebuilt Styles from Scratch ---
 
-// --- Define Styles as a JavaScript Object ---
 const styles = {
+  // 1. The main container that fills the entire viewport and centers the card
   pageContainer: {
-    fontFamily: "'Poppins', sans-serif",
-    minHeight: '100vh',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: '20px',
+    minHeight: '100vh',
+    backgroundColor: '#0F0F23',
+    fontFamily: 'sans-serif',
+    padding: '1rem', // Safe padding for smaller screens
+    boxSizing: 'border-box',
   },
+
+  // 2. The main card. A flex container for its two children (left and right sections)
   loginCard: {
-    borderRadius: '10px',
-    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)',
     display: 'flex',
-    overflow: 'hidden',
     width: '100%',
     maxWidth: '1200px',
-    minHeight: '600px',
+    height: '750px',
+    maxHeight: '90vh', // Ensures the card never exceeds 90% of the viewport height
+    backgroundColor: '#16213E',
+    borderRadius: '24px',
+    overflow: 'hidden',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+    border: '1px solid #334155',
   },
+
+  // 3. The left (purple) section for branding and messaging
   leftSection: {
-    width: '450px',
-    backgroundColor: '#FFFFFF',
-    padding: '40px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    color: '#333',
+    width: '40%',
+    flexShrink: 0, // Prevents this section from shrinking
+    padding: '3rem',
+    color: '#FFFFFF',
+    background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
   },
+  
   brandName: {
-    fontSize: '1.6em',
-    fontWeight: '700',
-    letterSpacing: '1px',
-    color: '#044343',
+    fontWeight: '900',
+    fontSize: '4rem',
   },
-  mainMessageGroup: {
-    marginTop: 'auto',
+
+  welcomeMessage: {
+    fontSize: '3.5rem',
+    fontWeight: 'bold',
+    lineHeight: 1.1,
   },
-  mainMessageH1: {
-    fontSize: '3em',
-    fontWeight: '700',
-    lineHeight: '1.1',
-    marginBottom: '15px',
-  },
-  mainMessageP: {
-    fontSize: '0.9em',
-    lineHeight: '1.5',
-    color: '#666',
-  },
+  
+  // 4. The right (dark) section for the form. This is the scrollable container.
   rightSection: {
-    flexGrow: 1,
-    backgroundColor: '#044343',
-    padding: '40px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
-    color: '#FFFFFF',
-    position: 'relative',
+    width: '60%',
+    padding: '3rem',
+    overflowY: 'auto', // Allow vertical scrolling ONLY within this container
+    minHeight: 0,      // CRITICAL: Allows this container to shrink and enable overflow
   },
-  welcomeHeading: {
-    fontSize: '2.2em',
-    fontWeight: '600',
-    marginBottom: '10px',
-  },
-  welcomeSubheading: {
-    fontSize: '0.9em',
-    color: offWhite,
-    marginBottom: '30px',
-  },
-  loginForm: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-  },
-  inputGroup: {},
-  inputGroupLabel: {
-    fontSize: '0.9em',
-    fontWeight: '500',
-    color: offWhite,
-    marginBottom: '8px',
-  },
-  inputWithButton: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  inputField: {
+  
+  // 5. General styles for form elements
+  form: {
     width: '100%',
-    padding: '12px 15px',
-    backgroundColor: tealDark,
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '1em',
-    color: '#FFFFFF',
+    maxWidth: '400px',
+    margin: 'auto', // Center the form horizontally within the right section
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+  },
+
+  formTitle: {
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
+    color: '#F8FAFC',
+    textAlign: 'center',
+  },
+  
+  inputGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  },
+
+  label: {
+    fontWeight: 'bold',
+    color: '#CBD5E1',
+  },
+  
+  input: {
+    padding: '1rem',
+    backgroundColor: '#16213E',
+    border: '1px solid #334155',
+    borderRadius: '12px',
+    fontSize: '1rem',
+    color: '#F8FAFC',
     outline: 'none',
   },
-  passwordToggleButton: {
-    position: 'absolute',
-    right: '5px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    background: 'none',
-    border: 'none',
-    color: offWhite,
-    cursor: 'pointer',
-    fontSize: '0.9em',
-    padding: '8px 10px',
-  },
-  formOptions: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    fontSize: '0.85em',
-    color: offWhite,
-  },
-  rememberMe: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  rememberMeInput: {
-    marginRight: '8px',
-    accentColor: tealLight,
-    width: '16px',
-    height: '16px',
-  },
-  forgotPassword: {
-    color: tealLight,
-    textDecoration: 'none',
-    fontWeight: '500',
-  },
-  signInButton: {
-    width: '100%',
-    padding: '15px',
-    backgroundColor: '#FFFFFF',
-    color: tealPrimary,
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '1.1em',
-    fontWeight: '600',
-    cursor: 'pointer',
-  },
-  socialLoginSeparator: {
-    textAlign: 'center',
-    color: offWhite,
-    fontSize: '0.85em',
-    margin: '20px 0',
-  },
-  socialButton: {
-    width: '100%',
-    padding: '12px',
-    border: `1px solid ${tealDark}`,
-    borderRadius: '5px',
-    backgroundColor: tealPrimary,
+
+  button: {
+    padding: '1rem',
+    fontSize: '1rem',
+    fontWeight: 'bold',
     color: '#FFFFFF',
-    fontSize: '1em',
-    fontWeight: '500',
+    background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+    border: 'none',
+    borderRadius: '12px',
     cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
+    textTransform: 'uppercase',
   },
-  googleIcon: {
-    width: '20px',
-    height: '20px',
+  
+  buttonDisabled: {
+    background: '#475569',
+    cursor: 'not-allowed',
   },
-  signupLink: {
+  
+  errorText: {
+    color: '#EF4444',
     textAlign: 'center',
-    fontSize: '0.9em',
-    color: offWhite,
-    marginTop: '30px',
-  },
-  signupLinkA: {
-    color: tealLight,
-    textDecoration: 'none',
-    fontWeight: '600',
-  },
+  }
 };
+
+
+// --- The Rebuilt Component ---
 
 function LoginPageUI({
   email,
   setEmail,
   password,
   setPassword,
-  newPasswordRequired,
-  newPassword,
-  setNewPassword,
-  showPassword,
-  setShowPassword,
-  rememberMe,
-  setRememberMe,
+  // You can add the other props back here as needed (e.g., newPassword)
   handleSubmit,
   loading,
   error,
 }) {
+
+  // Simple handler to merge disabled styles
+  const getButtonStyle = () => {
+    return loading 
+      ? { ...styles.button, ...styles.buttonDisabled } 
+      : styles.button;
+  };
+
   return (
     <div style={styles.pageContainer}>
       <div style={styles.loginCard}>
+        
+        {/* Left Section (Branding) */}
         <div style={styles.leftSection}>
-          <div style={styles.brandName}>Veridian</div>
-          <div style={styles.mainMessageGroup}>
-            <h1 style={styles.mainMessageH1}>Get Everything You Want</h1>
-            <p style={styles.mainMessageP}>
-              You can get everything you want if you work hard, trust the process,
-              and stick to the plan.
-            </p>
-          </div>
-        </div>
-        <div style={styles.rightSection}>
-          <h2 style={styles.welcomeHeading}>Welcome Back</h2>
-          <p style={styles.welcomeSubheading}>
-            Enter your email and password to access your account
+          <div style={styles.brandName}>CRUX</div>
+          <h1 style={{ ...styles.welcomeMessage, marginBottom: '-13rem' }}>
+            <DecryptedText
+              text="WELCOME BACK."
+              speed={40}
+              maxIterations={18}
+              animateOn="view"
+              revealDirection="center"
+              className="decrypted-heading"
+            />
+          </h1>
+          <p style={{ fontSize: '1.25rem', marginTop: 0, color: '#FFF', fontWeight: 500, textShadow: '0 0 0 transparent' }}>
+            <DecryptedText
+              text="Sign in to access your personalized dashboard and get back to achieving your goals."
+              speed={18}
+              maxIterations={12}
+              animateOn="view"
+              revealDirection="start"
+              className="decrypted-para"
+            />
           </p>
-          <form onSubmit={handleSubmit} style={styles.loginForm}>
+        </div>
+
+        {/* Right Section (Form) - THIS PART SCROLLS INTERNALLY */}
+        <div style={styles.rightSection}>
+          <form onSubmit={handleSubmit} style={styles.form}>
+            <h2 style={styles.formTitle}>Sign In</h2>
+
             <div style={styles.inputGroup}>
-              <label htmlFor="email" style={styles.inputGroupLabel}>
-                Email
-              </label>
-              <div style={styles.inputWithButton}>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  style={styles.inputField}
-                  required
-                />
-              </div>
+              <label htmlFor="email" style={styles.label}>Email Address</label>
+              <input
+                type="email"
+                id="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={styles.input}
+                required
+              />
             </div>
+
             <div style={styles.inputGroup}>
-              <label htmlFor="password" style={styles.inputGroupLabel}>
-                Password
-              </label>
-              <div style={styles.inputWithButton}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  style={styles.inputField}
-                  required
-                />
-                <button
-                  type="button"
-                  style={styles.passwordToggleButton}
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
+              <label htmlFor="password" style={styles.label}>Password</label>
+              <input
+                type="password"
+                id="password"
+                placeholder="••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={styles.input}
+                required
+              />
             </div>
-            {newPasswordRequired && (
-              <div style={styles.inputGroup}>
-                <label htmlFor="new-password" style={styles.inputGroupLabel}>
-                  New Password
-                </label>
-                <div style={styles.inputWithButton}>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    id="new-password"
-                    placeholder="Enter your new password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    style={styles.inputField}
-                    required
-                  />
-                </div>
-              </div>
-            )}
-            <div style={styles.formOptions}>
-              <div style={styles.rememberMe}>
-                <input
-                  type="checkbox"
-                  id="remember-me"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  style={styles.rememberMeInput}
-                />
-                <label htmlFor="remember-me">Remember me</label>
-              </div>
-              <a href="#" style={styles.forgotPassword}>
-                Forgot Password
-              </a>
-            </div>
-            <button
-              type="submit"
-              style={styles.signInButton}
-              disabled={loading}
-            >
+            
+            {/* Display loading or error states */}
+            {error && <p style={styles.errorText}>{error}</p>}
+
+            <button type="submit" style={getButtonStyle()} disabled={loading}>
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
-            {error && (
-              <p
-                style={{
-                  color: 'red',
-                  textAlign: 'center',
-                  fontSize: '0.9em',
-                  marginTop: '10px',
-                }}
-              >
-                {error}
-              </p>
-            )}
-            <div style={styles.socialLoginSeparator}>
-              <span>Or Sign In with</span>
-            </div>
-            <button type="button" style={styles.socialButton}>
-              <span style={styles.googleIcon}></span> Sign In with Google
-            </button>
+            
           </form>
-          <div style={styles.signupLink}>
-            Don't have an account?{' '}
-            <a href="#" style={styles.signupLinkA}>
-              Sign Up
-            </a>
-          </div>
         </div>
+        
       </div>
     </div>
   );
