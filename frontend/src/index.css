@@ -1,7 +1,12 @@
-/* High Contrast Dark Theme - Maximum Visibility */
-
-/* Import Inter font */
+/* Import statements must come first */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Tailwind CSS v3 directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* High Contrast Dark Theme - Maximum Visibility */
 
 :root {
   /* Typography */
@@ -63,22 +68,29 @@
   box-sizing: border-box;
 }
 
+/* Allow Tailwind classes to work by being more specific */
+.tailwind-test,
+.tailwind-test * {
+  all: unset !important;
+}
+
+/* Make custom styles more specific to avoid overriding Tailwind */
+body:not(.tailwind-test) {
+  background-color: var(--color-background) !important;
+  color: var(--color-text-primary) !important;
+}
+
 
 html {
   font-family: var(--font-family) !important;
-  background-color: var(--color-background) !important;
-  color: var(--color-text-primary) !important;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-
 body {
   font-family: var(--font-family) !important;
-  background-color: var(--color-background) !important;
-  color: var(--color-text-primary) !important;
   min-height: 100vh;
   overflow-x: hidden;
   margin: 0 !important;
@@ -87,14 +99,28 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+/* Only apply dark theme when no Tailwind classes are present */
+body:not([class*="bg-"]):not([class*="text-"]) {
   background-color: var(--color-background) !important;
   color: var(--color-text-primary) !important;
 }
 
-/* Force all containers to be dark with proper text */
-section, main, header, footer, nav, aside {
+#root:not([class*="bg-"]):not([class*="text-"]) {
+  background-color: var(--color-background) !important;
   color: var(--color-text-primary) !important;
 }
+
+/* Temporarily disable container overrides to test Tailwind */
+/* section:not([class*="text-"]), 
+main:not([class*="text-"]), 
+header:not([class*="text-"]), 
+footer:not([class*="text-"]), 
+nav:not([class*="text-"]), 
+aside:not([class*="text-"]) {
+  color: var(--color-text-primary) !important;
+} */
 
 /* Typography with maximum contrast */
 h1, h2, h3, h4, h5, h6 {
@@ -161,8 +187,8 @@ a:hover {
   color: var(--color-primary-light) !important;
 }
 
-/* High contrast buttons */
-button {
+/* High contrast buttons - but not for Tailwind test */
+button:not(.tailwind-test button) {
   font-family: var(--font-family) !important;
   font-weight: 700 !important;
   border: none;
@@ -242,19 +268,19 @@ input:focus, textarea:focus, select:focus {
   outline-offset: 2px;
 }
 
-/* Force dark on layout components */
-.auth-layout,
-.auth-container,
-.auth-content,
-.main-layout,
-.header,
-.main-content,
-.sidebar,
-.content-area,
-.footer {
+/* Temporarily disable layout overrides to test Tailwind */
+/* .auth-layout:not([class*="bg-"]),
+.auth-container:not([class*="bg-"]),
+.auth-content:not([class*="bg-"]),
+.main-layout:not([class*="bg-"]),
+.header:not([class*="bg-"]),
+.main-content:not([class*="bg-"]),
+.sidebar:not([class*="bg-"]),
+.content-area:not([class*="bg-"]),
+.footer:not([class*="bg-"]) {
   background-color: var(--color-background) !important;
   color: #FFFFFF !important;
-}
+} */
 
 /* Utility Classes with Maximum Contrast */
 .text-primary { 

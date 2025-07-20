@@ -1,261 +1,71 @@
-// src/components/IdeaCard.jsx
-import React, { useState } from 'react';
-// Corrected import path for stripMarkdown
-import { stripMarkdown } from '../utils/markdownUtils'; // CORRECTED PATH
+import React, { useState, useEffect } from 'react';
+import { truncateText, formatDate } from '../utils/ideaUtils';
+import { getRandomGradient } from '../constant/gradients';
 
-// Enhanced styles for the card with modern design
-const cardStyles = {
-  card: {
-    backgroundColor: '#ffffff',
-    border: '1px solid #e5e7eb',
-    borderRadius: '20px',
-    overflow: 'hidden',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-    cursor: 'pointer',
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '340px',
-    position: 'relative',
-    backdropFilter: 'blur(10px)',
-    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-    willChange: 'transform, box-shadow',
-  },
-  cardHover: {
-    transform: 'translateY(-12px) scale(1.03)',
-    boxShadow: '0 25px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(16, 185, 129, 0.3)',
-    borderColor: '#10b981',
-  },
-  imageHeader: {
-    position: 'relative',
-    width: '100%',
-    height: '200px',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#ffffff',
-    textShadow: '0 2px 8px rgba(0,0,0,0.5)',
-  },
-  image: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    filter: 'brightness(0.7) contrast(1.1) saturate(1.2)',
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  imageHover: {
-    transform: 'scale(1.1) rotate(2deg)',
-    filter: 'brightness(0.8) contrast(1.2) saturate(1.3)',
-  },
-  titleOverlay: {
-    position: 'absolute',
-    zIndex: 3,
-    fontSize: '1.375rem',
-    fontWeight: '800',
-    padding: '20px',
-    textAlign: 'center',
-    width: '100%',
-    boxSizing: 'border-box',
-    color: '#ffffff',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    textShadow: '0 3px 15px rgba(0,0,0,0.8)',
-    lineHeight: '1.2',
-    background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)',
-    letterSpacing: '0.5px',
-  },
-  body: {
-    padding: '28px',
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    gap: '18px',
-    position: 'relative',
-  },
-  descriptionPreview: {
-    fontSize: '1rem',
-    color: '#64748b',
-    lineHeight: '1.7',
-    display: '-webkit-box',
-    WebkitLineClamp: 3,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    fontWeight: '400',
-    marginBottom: '4px',
-  },
-  footer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 'auto',
-    paddingTop: '20px',
-    borderTop: '1px solid #f1f5f9',
-  },
-  date: {
-    fontSize: '0.875rem',
-    color: '#94a3b8',
-    fontWeight: '600',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    transition: 'color 0.2s ease',
-  },
-  readMore: {
-    fontSize: '0.875rem',
-    color: '#10b981',
-    fontWeight: '700',
-    textDecoration: 'none',
-    transition: 'all 0.2s ease',
-    padding: '6px 12px',
-    borderRadius: '20px',
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    border: '1px solid rgba(16, 185, 129, 0.2)',
-  },
-  readMoreHover: {
-    backgroundColor: '#10b981',
-    color: '#ffffff',
-    transform: 'scale(1.05)',
-  },
-  tag: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '6px 14px',
-    background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
-    color: '#0369a1',
-    borderRadius: '25px',
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    border: '1px solid rgba(3, 105, 161, 0.2)',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-  },
-  hoverGlow: {
-    position: 'absolute',
-    top: '-2px',
-    left: '-2px',
-    right: '-2px',
-    bottom: '-2px',
-    borderRadius: '22px',
-    background: 'linear-gradient(135deg, #10b981, #3b82f6)',
-    opacity: 0,
-    transition: 'opacity 0.3s ease',
-    zIndex: -1,
-  },
-  hoverGlowVisible: {
-    opacity: 0.2,
-  },
-};
-
-function IdeaCard({ idea, onClick, headerImageUrl }) {
+const IdeaCard = ({ idea, onClick, index }) => {
+  const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isReadMoreHovered, setIsReadMoreHovered] = useState(false);
 
-  const truncatedDescription = stripMarkdown(idea.description).substring(0, 140) + (idea.description.length > 140 ? '...' : '');
-  const formattedDate = idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  }) : 'N/A';
-
-  // Generate a random tag based on content length or other criteria
-  const getIdeaTag = () => {
-    const length = idea.description.length;
-    if (length > 500) return { text: 'Detailed', icon: '📝' };
-    if (length > 200) return { text: 'Medium', icon: '📄' };
-    return { text: 'Quick', icon: '⚡' };
-  };
-
-  const ideaTag = getIdeaTag();
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), index * 100);
+    return () => clearTimeout(timer);
+  }, [index]);
 
   return (
     <div
-      style={{ 
-        ...cardStyles.card, 
-        ...(isHovered ? cardStyles.cardHover : {}),
-        position: 'relative',
-      }}
+      className={`group cursor-pointer transition-all duration-300 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}
       onClick={() => onClick(idea)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Hover glow effect */}
-      <div style={{
-        ...cardStyles.hoverGlow,
-        ...(isHovered ? cardStyles.hoverGlowVisible : {})
-      }} />
-      
-      <div style={cardStyles.imageHeader}>
-        {headerImageUrl && (
-          <img 
-            src={headerImageUrl} 
-            alt={idea.title} 
-            style={{
-              ...cardStyles.image,
-              ...(isHovered ? cardStyles.imageHover : {})
-            }} 
-          />
-        )}
-        <h3 style={cardStyles.titleOverlay}>{idea.title}</h3>
-      </div>
-      
-      <div style={cardStyles.body}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <span style={cardStyles.tag}>
-            <span style={{ marginRight: '6px' }}>{ideaTag.icon}</span>
-            {ideaTag.text}
-          </span>
-          {isHovered && (
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: '#10b981',
-              animation: 'pulse 2s infinite',
-              boxShadow: '0 0 8px rgba(16, 185, 129, 0.6)',
-            }} />
-          )}
-        </div>
-        
-        <p style={cardStyles.descriptionPreview}>{truncatedDescription}</p>
-        
-        <div style={cardStyles.footer}>
-          <div style={{
-            ...cardStyles.date,
-            ...(isHovered ? { color: '#10b981' } : {})
-          }}>
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style={{ opacity: 0.8 }}>
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-              <path d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
-            </svg>
-            {formattedDate}
+      <div className={`bg-gray-800 border border-gray-700 rounded-lg overflow-hidden transition-all duration-300 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/20 ${
+        isHovered ? 'transform scale-105' : ''
+      }`}>
+        {/* Card Header with Gradient */}
+        <div className={`h-32 bg-gradient-to-r ${getRandomGradient(index)} relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+          <div className="absolute bottom-4 left-4 right-4">
+            <h3 className="text-white font-semibold text-lg leading-tight">
+              {truncateText(idea.title, 40)}
+            </h3>
           </div>
-          <div 
-            style={{
-              ...cardStyles.readMore,
-              ...(isReadMoreHovered ? cardStyles.readMoreHover : {})
-            }}
-            onMouseEnter={() => setIsReadMoreHovered(true)}
-            onMouseLeave={() => setIsReadMoreHovered(false)}
-          >
-            <span>Read more</span>
-            <span style={{ 
-              marginLeft: '6px',
-              transition: 'transform 0.2s ease',
-              transform: isReadMoreHovered ? 'translateX(4px)' : 'translateX(0)'
-            }}>→</span>
+          {/* Floating Icons */}
+          <div className="absolute top-3 right-3">
+            <div className="bg-white bg-opacity-20 rounded-full p-2">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Body */}
+        <div className="p-6">
+          <p className="text-gray-400 text-sm leading-relaxed mb-4">
+            {truncateText(idea.description, 120)}
+          </p>
+          
+          {/* Card Footer */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-xs text-gray-500">
+                {formatDate(idea.createdAt)}
+              </span>
+            </div>
+            <div className="flex items-center space-x-1 text-gray-500 group-hover:text-purple-400 transition-colors">
+              <span className="text-xs">View</span>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default IdeaCard;

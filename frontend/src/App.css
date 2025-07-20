@@ -88,4 +88,5 @@ html, body, #root {
 
 /* Ensure no component can override the dark theme */
 div, section, main, header, footer, nav, aside, article {
-  background-color: transparent !import
+  background-color: transparent !important;
+}

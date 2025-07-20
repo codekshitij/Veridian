@@ -5,7 +5,7 @@ import MainLayout from '../layouts/MainLayout' // Your existing MainLayout
 import LoginPage from '../features/auth/pages/LoginPage' // Your existing LoginPage
 
 // Import the actual IdeaCanvasPage component
-import IdeaCanvasPage from '../features/ideaCanvas/components/IdeaCanvasPage' // Renamed to RealIdeaCanvasPage to avoid conflict with placeholder
+import IdeaCanvasPage from '../features/ideaCanvas/pages/IdeaCanvasPage' // Renamed to RealIdeaCanvasPage to avoid conflict with placeholder
 import DashboardPage from '../features/dashboard/pages/DashboardPage' // Your existing DashboardPage
 import WorkspacePage from '../features/workspace/pages/WorkspacePage'
 import CalendarPage from '../features/calendar/pages/CalendarPage' // Your existing CalendarPage
@@ -14,8 +14,6 @@ import './App.css' // Your existing CSS import
 
 // Placeholder components (keep these as placeholders until you implement them)
 const SignupPage = () => <div>Signup Page</div>
-
-
 
 function App() {
   return (

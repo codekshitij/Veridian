@@ -1,76 +1,33 @@
 import React from 'react';
-import { useAuth } from '../../../src/contexts/authContext'; // Adjust path based on location
+import { formatDate, getGreeting } from '../utils/dashboardUtils';
 
-// Define colors, potentially reusing from a central theme file if you had one
-const dashboardHeaderColors = {
-  background: '#1A1A1A', // Dark background to match theme
-  textPrimary: '#F8FAFC', // Light text to match theme
-  textAccent: '#60A5FA', // Accent blue from theme
-  divider: '#232B3E',
-  shadow: 'rgba(0, 0, 0, 0.18)',
-};
-
-// Styles for the DashboardHeader
-const styles = {
-  headerContainer: {
-    width: '100%',
-    backgroundColor: '#0F172A',
-    border: '2px solid #334155',
-    color: '#FFFFFF',
-    borderRadius: '14px',
-    padding: '24px 32px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    marginBottom: '2rem',
-    boxSizing: 'border-box',
-  },
-  greetingText: {
-    fontSize: '2.3em',
-    fontWeight: '700',
-    color: dashboardHeaderColors.textPrimary,
-    marginBottom: '0',
-    letterSpacing: '0.5px',
-    textShadow: '0 2px 8px #0ea5e944',
-  },
-  welcomeMessage: {
-    fontSize: '1.2em',
-    color: dashboardHeaderColors.textAccent, // Teal accent for welcome message
-    fontWeight: '500',
-    // Responsive font size - NOTE: These will NOT work as inline styles.
-    '@media (max-width: 768px)': {
-      fontSize: '0.9em',
-    },
-  },
-};
-
-function DashboardHeader() {
-  // Use the useAuth hook to get user object and authentication status
-  const { user, isAuthenticated } = useAuth();
-
-  // Safely get the user's given_name attribute.
-  // If user or attributes are null/undefined, userName will be undefined.
-  const userName = user?.attributes?.given_name;
-  
-
-  return (
-    <div style={styles.headerContainer}>
-      {/* Conditionally render greeting based on authentication status and user data */}
-      {isAuthenticated && userName ? ( // Check both isAuthenticated and if userName exists
-        <>
-          <h2 style={styles.greetingText}>Hello, {userName}!</h2>
-
-        </>
-      ) : (
-        // Fallback for unauthenticated users or when name is not available
-        <>
-          <h2 style={styles.greetingText}>Hello!</h2>
-          
-        </>
-      )}
+const DashboardHeader = ({ currentTime, dayProgress, userName }) => (
+  <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          {getGreeting(currentTime.getHours())}, {userName}!
+        </h1>
+        <p className="text-lg text-gray-600">
+          {formatDate(currentTime)}
+        </p>
+      </div>
+      <div className="mt-4 md:mt-0 text-right">
+        <div className="text-sm text-gray-500 mb-2">Day Progress</div>
+        <div className="flex items-center space-x-3">
+          <div className="w-32 bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${dayProgress}%` }}
+            ></div>
+          </div>
+          <span className="text-sm font-medium text-gray-700">
+            {dayProgress.toFixed(1)}%
+          </span>
+        </div>
+      </div>
     </div>
-  );
-}
+  </div>
+);
 
 export default DashboardHeader;
