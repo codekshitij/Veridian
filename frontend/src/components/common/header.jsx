@@ -1,259 +1,500 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const styles = {
   headerContainer: {
     fontFamily: 'var(--font-family), sans-serif',
-    backgroundColor: '#1A1A1A',
+    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
     color: '#FFFFFF',
-    padding: '0.3rem 2rem',
-    borderBottom: '2px solid #4B5563',
+    padding: '0 2rem',
+    borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     boxSizing: 'border-box',
     width: '100%',
-    minHeight: '80px',
-    position: 'relative',
-    backdropFilter: 'blur(10px)',
+    height: '72px',
+    position: 'sticky',
+    top: 0,
+    zIndex: 100,
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  
+  headerScrolled: {
+    background: 'rgba(15, 23, 42, 0.98)',
+    backdropFilter: 'blur(24px)',
+    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+    borderBottom: '1px solid rgba(59, 130, 246, 0.1)',
   },
   
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
     gap: '2rem',
-    flex: 1, // Take up all available space
+    flex: 1,
+  },
+  
+  // Sidebar toggle button (for when sidebar is collapsed)
+  sidebarToggle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '44px',
+    height: '44px',
+    background: 'rgba(148, 163, 184, 0.1)',
+    border: '1px solid rgba(148, 163, 184, 0.2)',
+    borderRadius: '14px',
+    color: '#94A3B8',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    fontSize: '1.1rem',
+  },
+  
+  sidebarToggleHover: {
+    background: 'rgba(59, 130, 246, 0.15)',
+    borderColor: 'rgba(59, 130, 246, 0.3)',
+    color: '#60A5FA',
+    transform: 'scale(1.05)',
+  },
+  
+  brandContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '16px',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  
+  brandContainerHover: {
+    transform: 'translateY(-1px)',
+  },
+  
+  brandIcon: {
+    width: '36px',
+    height: '36px',
+    background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
+    borderRadius: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '1.3rem',
+    color: 'white',
+    boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  
+  brandIconHover: {
+    transform: 'scale(1.05) rotate(5deg)',
+    boxShadow: '0 6px 24px rgba(59, 130, 246, 0.4)',
+  },
+  
+  brandText: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.125rem',
   },
   
   brandName: {
-    fontFamily: 'Bebas Neue, sans-serif',
-    fontSize: '2.5rem',
-    fontWeight: '900',
-    letterSpacing: '-0.03em',
-    background: 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 50%, #34D399 100%)',
+    fontSize: '1.5rem',
+    fontWeight: '700',
+    background: 'linear-gradient(135deg, #F1F5F9 0%, #CBD5E1 100%)',
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
     backgroundClip: 'text',
-    textShadow: 'none',
-    filter: 'drop-shadow(0 2px 8px rgba(96, 165, 250, 0.3))',
+    letterSpacing: '0.5px',
+    lineHeight: '1.2',
+    margin: 0,
+  },
+  
+  brandSubtitle: {
+    fontSize: '0.75rem',
+    color: '#64748B',
+    fontWeight: '500',
+    letterSpacing: '0.5px',
+    lineHeight: '1',
+  },
+  
+  // Search bar
+  searchContainer: {
     position: 'relative',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    marginLeft: '14px',
+    flex: '1',
+    maxWidth: '400px',
+    marginLeft: '2rem',
+    '@media (max-width: 768px)': {
+      display: 'none',
+    },
   },
   
-  brandNameHover: {
-    transform: 'scale(1.02)',
-    filter: 'drop-shadow(0 4px 12px rgba(96, 165, 250, 0.5))',
+  searchInput: {
+    width: '100%',
+    padding: '0.75rem 1rem 0.75rem 3rem',
+    background: 'rgba(148, 163, 184, 0.08)',
+    border: '1px solid rgba(148, 163, 184, 0.15)',
+    borderRadius: '16px',
+    color: '#F1F5F9',
+    fontSize: '0.9rem',
+    fontWeight: '400',
+    outline: 'none',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    backdropFilter: 'blur(8px)',
+    boxSizing: 'border-box',
   },
   
-  // Add a subtle glow effect behind the text
-  brandContainer: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    marginLeft: '32px', // More margin to ensure no overlap
+  searchInputFocus: {
+    background: 'rgba(59, 130, 246, 0.08)',
+    borderColor: 'rgba(59, 130, 246, 0.3)',
+    boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
   },
   
-  brandGlow: {
+  searchIcon: {
     position: 'absolute',
+    left: '1rem',
     top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '120%',
-    height: '120%',
-    background: 'radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 70%)',
-    borderRadius: '50%',
-    zIndex: -1,
-    opacity: 0,
-    transition: 'opacity 0.3s ease',
+    transform: 'translateY(-50%)',
+    color: '#94A3B8',
+    fontSize: '1.1rem',
+    pointerEvents: 'none',
+    transition: 'color 0.3s ease',
   },
   
-  brandGlowActive: {
-    opacity: 1,
+  searchIconFocus: {
+    color: '#60A5FA',
   },
   
   headerRight: {
     display: 'flex',
     alignItems: 'center',
-    gap: '1.5rem',
-    zIndex: 1,
+    gap: '0.75rem',
   },
   
-  iconButton: {
-    backgroundColor: 'transparent',
-    border: '2px solid #4B5563',
-    borderRadius: '12px',
-    color: '#E5E7EB',
-    cursor: 'pointer',
-    fontSize: '1rem',
+  // Action buttons
+  actionButton: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '0.7rem',
-    transition: 'all 0.3s ease',
+    width: '44px',
+    height: '44px',
+    background: 'rgba(148, 163, 184, 0.08)',
+    border: '1px solid rgba(148, 163, 184, 0.15)',
+    borderRadius: '14px',
+    color: '#94A3B8',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    fontSize: '1.1rem',
     position: 'relative',
-    width: '40px',
-    height: '40px',
+    backdropFilter: 'blur(8px)',
   },
   
-  iconButtonHover: {
-    backgroundColor: '#2A2A2A',
-    borderColor: '#60A5FA',
+  actionButtonHover: {
+    background: 'rgba(59, 130, 246, 0.15)',
+    borderColor: 'rgba(59, 130, 246, 0.3)',
     color: '#60A5FA',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 4px 12px rgba(96, 165, 250, 0.2)',
+    transform: 'translateY(-2px) scale(1.05)',
+    boxShadow: '0 4px 16px rgba(59, 130, 246, 0.15)',
   },
   
   notificationBadge: {
     position: 'absolute',
-    top: '6px',
-    right: '6px',
-    width: '10px',
-    height: '10px',
-    backgroundColor: '#F87171',
+    top: '8px',
+    right: '8px',
+    width: '8px',
+    height: '8px',
+    background: 'linear-gradient(135deg, #EF4444 0%, #F87171 100%)',
     borderRadius: '50%',
-    border: '2px solid #1A1A1A',
-    boxShadow: '0 0 6px rgba(248, 113, 113, 0.6)',
+    border: '2px solid rgba(15, 23, 42, 0.8)',
+    boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
+    animation: 'pulse 2s infinite',
   },
   
+  // User profile section
   userSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '1rem',
-    padding: '0.5rem 0.8rem',
-    borderRadius: '12px',
+    gap: '0.75rem',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '16px',
     cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    border: '2px solid #4B5563',
-    backgroundColor: '#2A2A2A',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    background: 'rgba(148, 163, 184, 0.08)',
+    border: '1px solid rgba(148, 163, 184, 0.15)',
+    backdropFilter: 'blur(8px)',
+    minWidth: '160px',
   },
   
   userSectionHover: {
-    backgroundColor: '#3A3A3A',
-    borderColor: '#60A5FA',
-    transform: 'translateY(-2px)',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+    background: 'rgba(59, 130, 246, 0.1)',
+    borderColor: 'rgba(59, 130, 246, 0.2)',
+    transform: 'translateY(-1px)',
+    boxShadow: '0 4px 16px rgba(59, 130, 246, 0.1)',
   },
   
   userAvatar: {
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    backgroundColor: '#60A5FA',
+    width: '36px',
+    height: '36px',
+    borderRadius: '12px',
+    background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: '#FFFFFF',
-    fontWeight: '800',
-    fontSize: '1rem',
-    border: '2px solid #93C5FD',
-    boxShadow: '0 2px 8px rgba(96, 165, 250, 0.3)',
+    fontWeight: '600',
+    fontSize: '0.9rem',
+    border: '2px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  
+  userAvatarHover: {
+    transform: 'scale(1.05)',
+    boxShadow: '0 4px 16px rgba(59, 130, 246, 0.4)',
   },
   
   userInfo: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    gap: '0.125rem',
+    flex: 1,
+    minWidth: 0,
     '@media (max-width: 768px)': {
       display: 'none',
     },
   },
   
   userName: {
-    fontSize: '1rem',
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    color: '#F1F5F9',
     lineHeight: '1.2',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   
   userStatus: {
-    fontSize: '0.85rem',
+    fontSize: '0.75rem',
     color: '#34D399',
     lineHeight: '1.2',
-    fontWeight: '600',
+    fontWeight: '500',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+  },
+  
+  statusDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    background: '#34D399',
+    boxShadow: '0 0 6px rgba(52, 211, 153, 0.6)',
+    animation: 'pulse 2s infinite',
   },
   
   dropdownIcon: {
-    color: '#9CA3AF',
+    color: '#94A3B8',
     fontSize: '1rem',
-    transition: 'color 0.3s ease',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   },
+  
+  dropdownIconHover: {
+    color: '#60A5FA',
+    transform: 'rotate(180deg)',
+  },
+  
+  // Mobile responsive
+  mobileHidden: {
+    '@media (max-width: 768px)': {
+      display: 'none',
+    },
+  },
+  
+  // Animation keyframes
+  animations: `
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `,
 };
 
-function Header() {
-  const [brandHovered, setBrandHovered] = useState(false);
-  const [notifHovered, setNotifHovered] = useState(false);
-  const [userHovered, setUserHovered] = useState(false);
+function Header({ onSidebarToggle, isSidebarCollapsed }) {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [hoveredElement, setHoveredElement] = useState(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const currentTime = new Date().toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
     <>
-      <header style={styles.headerContainer}>
+      <style>{styles.animations}</style>
+      <header 
+        style={{
+          ...styles.headerContainer,
+          ...(isScrolled ? styles.headerScrolled : {}),
+        }}
+      >
         <div style={styles.headerLeft}>
-          {/* Veridian Brand Name */}
-          <div style={styles.brandContainer}>
+          {/* Sidebar Toggle (when collapsed) */}
+          {isSidebarCollapsed && (
+            <button
+              style={{
+                ...styles.sidebarToggle,
+                ...(hoveredElement === 'sidebar' ? styles.sidebarToggleHover : {}),
+              }}
+              onClick={onSidebarToggle}
+              onMouseEnter={() => setHoveredElement('sidebar')}
+              onMouseLeave={() => setHoveredElement(null)}
+              aria-label="Toggle sidebar"
+            >
+              <span className="material-icons">menu</span>
+            </button>
+          )}
+
+          {/* Brand */}
+          <div
+            style={{
+              ...styles.brandContainer,
+              ...(hoveredElement === 'brand' ? styles.brandContainerHover : {}),
+            }}
+            onMouseEnter={() => setHoveredElement('brand')}
+            onMouseLeave={() => setHoveredElement(null)}
+            onClick={() => window.location.href = '/dashboard'}
+          >
             <div 
               style={{
-                ...styles.brandGlow,
-                ...(brandHovered ? styles.brandGlowActive : {})
+                ...styles.brandIcon,
+                ...(hoveredElement === 'brand' ? styles.brandIconHover : {}),
               }}
-            ></div>
-            <h1 
-              style={{
-                ...styles.brandName,
-                ...(brandHovered ? styles.brandNameHover : {})
-              }}
-              onMouseEnter={() => setBrandHovered(true)}
-              onMouseLeave={() => setBrandHovered(false)}
             >
-              <span style={{ fontSize: '2.8rem', fontWeight: 600, letterSpacing: '-0.01em', verticalAlign: 'middle' }}>C</span>
-              <span style={{ fontSize: '2.8rem', fontWeight: 700, letterSpacing: '-0.03em', verticalAlign: 'middle' }}>rux</span>
-            </h1>
+              <span className="material-icons">auto_awesome</span>
+            </div>
+            <div style={styles.brandText}>
+              <h1 style={styles.brandName}>Veridian</h1>
+              <span style={styles.brandSubtitle}>Workspace</span>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div style={styles.searchContainer}>
+            <span 
+              className="material-icons" 
+              style={{
+                ...styles.searchIcon,
+                ...(searchFocused ? styles.searchIconFocus : {}),
+              }}
+            >
+              search
+            </span>
+            <input
+              type="text"
+              placeholder="Search anything..."
+              style={{
+                ...styles.searchInput,
+                ...(searchFocused ? styles.searchInputFocus : {}),
+              }}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+            />
           </div>
         </div>
 
         <div style={styles.headerRight}>
-          {/* Notification Button */}
+          {/* Quick Actions */}
           <button
             style={{
-              ...styles.iconButton,
-              ...(notifHovered ? styles.iconButtonHover : {})
+              ...styles.actionButton,
+              ...(hoveredElement === 'notifications' ? styles.actionButtonHover : {}),
             }}
+            onMouseEnter={() => setHoveredElement('notifications')}
+            onMouseLeave={() => setHoveredElement(null)}
             aria-label="Notifications"
-            onMouseEnter={() => setNotifHovered(true)}
-            onMouseLeave={() => setNotifHovered(false)}
           >
             <span className="material-icons">notifications</span>
             <div style={styles.notificationBadge}></div>
           </button>
 
-          {/* User Profile Section */}
+          <button
+            style={{
+              ...styles.actionButton,
+              ...(hoveredElement === 'help' ? styles.actionButtonHover : {}),
+            }}
+            onMouseEnter={() => setHoveredElement('help')}
+            onMouseLeave={() => setHoveredElement(null)}
+            aria-label="Help"
+          >
+            <span className="material-icons">help_outline</span>
+          </button>
+
+          {/* User Profile */}
           <div
             style={{
               ...styles.userSection,
-              ...(userHovered ? styles.userSectionHover : {})
+              ...(hoveredElement === 'user' ? styles.userSectionHover : {}),
             }}
-            onMouseEnter={() => setUserHovered(true)}
-            onMouseLeave={() => setUserHovered(false)}
-            // onClick={() => setLanyardOpen(true)}
+            onMouseEnter={() => setHoveredElement('user')}
+            onMouseLeave={() => setHoveredElement(null)}
           >
-            <div style={styles.userAvatar}>
+            <div 
+              style={{
+                ...styles.userAvatar,
+                ...(hoveredElement === 'user' ? styles.userAvatarHover : {}),
+              }}
+            >
               JD
             </div>
             <div style={styles.userInfo}>
               <span style={styles.userName}>John Doe</span>
-              <span style={styles.userStatus}>● Online</span>
+              <div style={styles.userStatus}>
+                <div style={styles.statusDot}></div>
+                Online • {currentTime}
+              </div>
             </div>
-            <span className="material-icons" style={styles.dropdownIcon}>
+            <span 
+              className="material-icons" 
+              style={{
+                ...styles.dropdownIcon,
+                ...(hoveredElement === 'user' ? styles.dropdownIconHover : {}),
+              }}
+            >
               keyboard_arrow_down
             </span>
           </div>
         </div>
       </header>
-      {/* <UserLanyardPopup
-        open={lanyardOpen}
-        onClose={() => setLanyardOpen(false)}
-        user={{ name: 'John Doe', status: 'Online' }}
-      /> */}
     </>
   );
 }
