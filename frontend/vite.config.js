@@ -11,6 +11,6 @@ export default defineConfig({
     alias: {
       './runtimeConfig': './runtimeConfig.browser',
     }
-  }
-  
+  },
+  assetsInclude: ['**/*.glb']
 })

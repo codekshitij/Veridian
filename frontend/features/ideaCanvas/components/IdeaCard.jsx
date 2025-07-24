@@ -1,111 +1,71 @@
-// src/components/IdeaCard.jsx
-import React, { useState } from 'react';
-// Corrected import path for stripMarkdown
-import { stripMarkdown } from '../utils/markdownUtils'; // CORRECTED PATH
+import React, { useState, useEffect } from 'react';
+import { truncateText, formatDate } from '../utils/ideaUtils';
+import { getRandomGradient } from '../constant/gradients';
 
-// Styles for the card (remains the same)
-const cardStyles = {
-  card: {
-    backgroundColor: 'var(--color-white)',
-    border: '1px solid rgba(58, 78, 108, 0.1)',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    boxShadow: '0 2px 8px var(--color-subtle-shadow)',
-    cursor: 'pointer',
-    transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '280px',
-  },
-  cardHover: {
-    transform: 'translateY(-3px)',
-    boxShadow: '0 4px 12px var(--color-subtle-shadow)',
-    borderColor: 'var(--color-green-primary)',
-  },
-  imageHeader: {
-    position: 'relative',
-    width: '100%',
-    paddingTop: '56.25%',
-    backgroundColor: 'var(--color-blue-ink)',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'var(--color-white)',
-    textShadow: '1px 1px 3px rgba(0,0,0,0.7)',
-  },
-  image: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    filter: 'brightness(0.8)',
-  },
-  titleOverlay: {
-    position: 'absolute',
-    zIndex: 1,
-    fontSize: '1.2em',
-    fontWeight: '600',
-    padding: '10px',
-    textAlign: 'center',
-    width: '100%',
-    boxSizing: 'border-box',
-    color: 'var(--color-white)',
-    top: '50%',
-    transform: 'translateY(-50%)',
-  },
-  body: {
-    padding: '20px',
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  descriptionPreview: {
-    fontSize: '0.9em',
-    color: 'var(--color-gray-text-on-light)',
-    marginBottom: '10px',
-    lineHeight: '1.4',
-    display: '-webkit-box',
-    WebkitLineClamp: 3,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
-  date: {
-    fontSize: '0.8em',
-    color: 'var(--color-gray-text-on-light)',
-    textAlign: 'right',
-    opacity: 0.7,
-    marginTop: 'auto',
-  },
-};
-
-function IdeaCard({ idea, onClick, headerImageUrl }) {
+const IdeaCard = ({ idea, onClick, index }) => {
+  const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const truncatedDescription = stripMarkdown(idea.description).substring(0, 150) + (idea.description.length > 150 ? '...' : '');
-  const formattedDate = idea.createdAt ? new Date(idea.createdAt).toLocaleDateString() : 'N/A';
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), index * 100);
+    return () => clearTimeout(timer);
+  }, [index]);
 
   return (
     <div
-      style={{ ...cardStyles.card, ...(isHovered ? cardStyles.cardHover : {}) }}
+      className={`group cursor-pointer transition-all duration-300 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}
       onClick={() => onClick(idea)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div style={cardStyles.imageHeader}>
-        {headerImageUrl && <img src={headerImageUrl} alt={idea.title} style={cardStyles.image} />}
-        <h3 style={cardStyles.titleOverlay}>{idea.title}</h3>
-      </div>
-      <div style={cardStyles.body}>
-        <p style={cardStyles.descriptionPreview}>{truncatedDescription}</p>
-        <div style={cardStyles.date}>{formattedDate}</div>
+      <div className={`bg-gray-800 border border-gray-700 rounded-lg overflow-hidden transition-all duration-300 hover:border-purple-500 hover:shadow-xl hover:shadow-purple-500/20 ${
+        isHovered ? 'transform scale-105' : ''
+      }`}>
+        {/* Card Header with Gradient */}
+        <div className={`h-32 bg-gradient-to-r ${getRandomGradient(index)} relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+          <div className="absolute bottom-4 left-4 right-4">
+            <h3 className="text-white font-semibold text-lg leading-tight">
+              {truncateText(idea.title, 40)}
+            </h3>
+          </div>
+          {/* Floating Icons */}
+          <div className="absolute top-3 right-3">
+            <div className="bg-white bg-opacity-20 rounded-full p-2">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Card Body */}
+        <div className="p-6">
+          <p className="text-gray-400 text-sm leading-relaxed mb-4">
+            {truncateText(idea.description, 120)}
+          </p>
+          
+          {/* Card Footer */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-xs text-gray-500">
+                {formatDate(idea.createdAt)}
+              </span>
+            </div>
+            <div className="flex items-center space-x-1 text-gray-500 group-hover:text-purple-400 transition-colors">
+              <span className="text-xs">View</span>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default IdeaCard;
